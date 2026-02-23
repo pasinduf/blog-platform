@@ -25,6 +25,7 @@ interface VirtualBlogListProps<T extends BaseBlog> {
     hasNextPage?: boolean;
     isNextPageLoading?: boolean;
     fetchNextPage?: () => void;
+    maxColumns?: number;
 }
 
 export function VirtualBlogList<T extends BaseBlog>({
@@ -35,21 +36,22 @@ export function VirtualBlogList<T extends BaseBlog>({
     hasNextPage,
     isNextPageLoading,
     fetchNextPage,
+    maxColumns = 2,
 }: VirtualBlogListProps<T>) {
     const [searchQuery, setSearchQuery] = React.useState('');
-    const [columns, setColumns] = React.useState(3);
+    const [columns, setColumns] = React.useState(maxColumns);
 
     // Update columns based on window width
     React.useEffect(() => {
         const updateColumns = () => {
             if (window.innerWidth < 768) setColumns(1);
-            else if (window.innerWidth < 1024) setColumns(2);
-            else setColumns(3);
+            else if (window.innerWidth < 1024) setColumns(Math.min(2, maxColumns));
+            else setColumns(maxColumns);
         };
         updateColumns();
         window.addEventListener('resize', updateColumns);
         return () => window.removeEventListener('resize', updateColumns);
-    }, []);
+    }, [maxColumns]);
 
     // 1. Filter blogs based on search query
     const filteredBlogs = React.useMemo(() => {

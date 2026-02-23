@@ -37,6 +37,7 @@ export function PublicFeedClient({ initialBlogs, initialNextCursor }: PublicFeed
             hasNextPage={!!nextCursor}
             isNextPageLoading={isLoadingNext}
             fetchNextPage={fetchNextPage}
+            maxColumns={2}
             renderStatus={() => null}
             renderContent={(blog) => (
                 <p className="text-muted-foreground line-clamp-3">
