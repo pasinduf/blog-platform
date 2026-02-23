@@ -111,7 +111,7 @@ export default function AdminUsersPage() {
                                         <td className="p-4 align-middle">
                                             <Badge
                                                 variant={
-                                                    u.status === 'APPROVED' ? 'default' :
+                                                    u.status === 'APPROVED' ? 'success' :
                                                         u.status === 'REJECTED' ? 'destructive' :
                                                             'secondary'
                                                 }

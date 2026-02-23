@@ -44,7 +44,7 @@ export function UserActionButtons({ userId, onApprove, onReject }: UserActionBut
                 confirmText="Approve"
                 onConfirm={handleApprove}
             >
-                <Button type="button" size="sm" variant="default" disabled={isPending}>
+                <Button type="button" size="sm" variant="success" disabled={isPending}>
                     Approve
                 </Button>
             </ConfirmationDialog>
