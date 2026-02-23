@@ -20,6 +20,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import { getSession } from "@/lib/session";
 import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export default async function RootLayout({
   children,
@@ -34,13 +35,20 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background`}
         suppressHydrationWarning
       >
-        <AuthProvider session={session}>
-          <div className="relative flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-          </div>
-          <Toaster richColors />
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider session={session}>
+            <div className="relative flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+            </div>
+            <Toaster richColors />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

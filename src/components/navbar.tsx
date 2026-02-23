@@ -11,9 +11,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { UserCircle, LogOut, KeyRound } from 'lucide-react';
+import { LogOut, KeyRound } from 'lucide-react';
 import { logoutAction } from '@/app/actions/auth';
 import { useRouter } from 'next/navigation';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { UserCircle } from 'lucide-react';
 
 export function Navbar() {
     const { user, role } = useAuth();
@@ -53,6 +55,7 @@ export function Navbar() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
+                    <ThemeToggle />
                     {user ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
