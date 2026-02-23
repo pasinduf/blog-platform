@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String         // Hashed password
+  name          String
+  role          Role           @default(USER) // WRITER, ADMIN, USER
+  status        UserStatus     @default(PENDING)
+  blogs         Blog[]         @relation("AuthoredBlogs")
+  comments      Comment[]
+  adminComments AdminComment[]
+  reactions     Reaction[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReactionType {
+  LIKE
+  HEART
+  DISLIKE
+}
+
+model Blog {
+  id            String         @id @default(uuid())
+  title         String
+  content       String         @db.Text
+  status        BlogStatus     @default(DRAFT)
+  authorId      String
+  author        User           @relation("AuthoredBlogs", fields: [authorId], references: [id])
+  aiAnalysis    Json?          // Structured insights
+  aiSummary     Json?          // Admin summary
+  comments      Comment[]
+  adminComments AdminComment[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+enum BlogStatus {
+  DRAFT
+  SUBMITTED
+  PUBLISHED
+}
+
+model Comment {
+  id        String    @id @default(uuid())
+  content   String    @db.Text
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id])
+  blogId    String
+  blog      Blog      @relation(fields: [blogId], references: [id])
+  parentId  String?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+  reactions Reaction[]
+  isEdited  Boolean   @default(false)
+  isDeleted Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Reaction {
+  id        String       @id @default(uuid())
+  type      ReactionType
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commentId String
+  comment   Comment      @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+
+  @@unique([userId, commentId])
+}
+
+model AdminComment {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  adminId   String
+  admin     User     @relation(fields: [adminId], references: [id])
+  blogId    String
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
