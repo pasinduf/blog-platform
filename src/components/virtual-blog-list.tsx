@@ -199,7 +199,7 @@ export function VirtualBlogList<T extends BaseBlog>({
 
             {filteredBlogs.length === 0 && (
                 <div className="py-12 text-center text-muted-foreground border rounded-lg border-dashed">
-                    No articles found matching {`${searchQuery ? `"${searchQuery}"` : ''}`}.
+                    No articles found matching {`${searchQuery ? `"${searchQuery}"` : ''}`}
                 </div>
             )}
         </div>

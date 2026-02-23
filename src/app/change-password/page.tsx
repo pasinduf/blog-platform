@@ -6,14 +6,49 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { useState } from 'react';
+import { passwordRegex, generateRandomPassword } from '@/lib/utils';
 
 export default function ChangePasswordPage() {
     const [state, formAction, isPending] = useActionState(changePasswordAction, null);
     const { user } = useAuth();
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const generatePassword = () => {
+        const pass = generateRandomPassword();
+        setNewPassword(pass);
+        setConfirmPassword(pass);
+        validatePassword(pass, pass);
+    };
+
+    const validatePassword = (pass: string, confirm: string) => {
+        if (!pass) {
+            setPasswordError('');
+            return;
+        }
+
+        if (!passwordRegex.test(pass)) {
+            setPasswordError('Password must be at least 8 characters long and contain at least one letter and one number.');
+            return;
+        }
+
+        if (confirm && pass !== confirm) {
+            setPasswordError('Passwords do not match.');
+            return;
+        }
+
+        setPasswordError('');
+    };
 
     if (!user) {
         return (
@@ -61,39 +96,131 @@ export default function ChangePasswordPage() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="currentPassword">Current Password</Label>
-                                <Input
-                                    id="currentPassword"
-                                    name="currentPassword"
-                                    type="password"
-                                    required
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="currentPassword"
+                                        name="currentPassword"
+                                        type={showCurrentPassword ? "text" : "password"}
+                                        required
+                                        value={currentPassword}
+                                        onChange={(e) => setCurrentPassword(e.target.value)}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
+                                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                    >
+                                        {showCurrentPassword ? (
+                                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-muted-foreground" />
+                                        )}
+                                        <span className="sr-only">
+                                            {showCurrentPassword ? "Hide password" : "Show password"}
+                                        </span>
+                                    </Button>
+                                </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="newPassword">New Password</Label>
-                                <Input
-                                    id="newPassword"
-                                    name="newPassword"
-                                    type="password"
-                                    required
-                                    minLength={6}
-                                />
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="newPassword">New Password</Label>
+                                    <Button
+                                        type="button"
+                                        variant="link"
+                                        className="p-0 h-auto text-xs"
+                                        onClick={generatePassword}
+                                    >
+                                        Auto-generate
+                                    </Button>
+                                </div>
+                                <div className="relative">
+                                    <Input
+                                        id="newPassword"
+                                        name="newPassword"
+                                        type={showNewPassword ? "text" : "password"}
+                                        required
+                                        value={newPassword}
+                                        onChange={(e) => {
+                                            setNewPassword(e.target.value);
+                                            validatePassword(e.target.value, confirmPassword);
+                                        }}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
+                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                    >
+                                        {showNewPassword ? (
+                                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-muted-foreground" />
+                                        )}
+                                        <span className="sr-only">
+                                            {showNewPassword ? "Hide password" : "Show password"}
+                                        </span>
+                                    </Button>
+                                </div>
+                                <p className="text-[10px] text-muted-foreground mt-1">
+                                    Use a strong password (minimum 8 characters, including at least one letter and one number).
+                                </p>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                                <Input
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type="password"
-                                    required
-                                    minLength={6}
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        required
+                                        value={confirmPassword}
+                                        onChange={(e) => {
+                                            setConfirmPassword(e.target.value);
+                                            validatePassword(newPassword, e.target.value);
+                                        }}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    >
+                                        {showConfirmPassword ? (
+                                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-muted-foreground" />
+                                        )}
+                                        <span className="sr-only">
+                                            {showConfirmPassword ? "Hide password" : "Show password"}
+                                        </span>
+                                    </Button>
+                                </div>
                             </div>
+
+                            {passwordError && (
+                                <p className="text-sm font-medium text-destructive">
+                                    {passwordError}
+                                </p>
+                            )}
                         </CardContent>
                         <CardFooter className="flex justify-between mt-4">
                             <Button variant="outline" type="button" asChild>
                                 <Link href="/">Cancel</Link>
                             </Button>
-                            <Button type="submit" disabled={isPending}>
+                            <Button
+                                type="submit"
+                                disabled={
+                                    isPending ||
+                                    !!passwordError ||
+                                    !currentPassword ||
+                                    !newPassword ||
+                                    !confirmPassword
+                                }
+                            >
                                 {isPending ? 'Updating...' : 'Update Password'}
                             </Button>
                         </CardFooter>

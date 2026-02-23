@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
+import { passwordRegex, generateRandomPassword } from '@/lib/utils';
 
 export default function RegisterPage() {
     const [state, formAction, isPending] = useActionState(registerAction, null);
@@ -55,22 +56,7 @@ export default function RegisterPage() {
     };
 
     const generatePassword = () => {
-        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const nums = '0123456789';
-        const mix = chars + nums + '!@#$%^&*';
-
-        let pass = '';
-        // Ensure at least one letter and one number
-        pass += chars[Math.floor(Math.random() * chars.length)];
-        pass += nums[Math.floor(Math.random() * nums.length)];
-
-        for (let i = 0; i < 10; i++) {
-            pass += mix[Math.floor(Math.random() * mix.length)];
-        }
-
-        // Shuffle the string
-        pass = pass.split('').sort(() => 0.5 - Math.random()).join('');
-
+        const pass = generateRandomPassword();
         setPassword(pass);
         setConfirmPassword(pass);
         validatePassword(pass, pass);
@@ -82,11 +68,10 @@ export default function RegisterPage() {
             return;
         }
 
-        // const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
-        // if (!passwordRegex.test(pass)) {
-        //     setPasswordError('Password must be at least 8 characters long and contain at least one letter and one number.');
-        //     return;
-        // }
+        if (!passwordRegex.test(pass)) {
+            setPasswordError('Password must be at least 8 characters long and contain at least one letter and one number.');
+            return;
+        }
 
         if (confirm && pass !== confirm) {
             setPasswordError('Passwords do not match.');

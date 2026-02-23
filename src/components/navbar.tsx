@@ -32,7 +32,7 @@ export function Navbar() {
                         {user && (
                             <>
                                 <Link href="/writer" className="text-muted-foreground hover:text-primary transition-colors">
-                                    Writer Dashboard
+                                    Dashboard
                                 </Link>
                                 <Link href="/writer/compose" className="text-muted-foreground hover:text-primary transition-colors">
                                     Compose

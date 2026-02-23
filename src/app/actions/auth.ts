@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { passwordRegex } from '@/lib/utils';
 
 export async function loginAction(prevState: any, formData: FormData) {
     const email = formData.get('email') as string;
@@ -71,7 +72,6 @@ export async function registerAction(prevState: any, formData: FormData) {
     }
 
     // Password validation: minimum 8 characters, at least one letter and one number
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(password)) {
         return { error: 'Password must be at least 8 characters long and contain at least one letter and one number' };
     }
@@ -113,8 +113,8 @@ export async function changePasswordAction(prevState: any, formData: FormData) {
         return { error: 'New passwords do not match' };
     }
 
-    if (newPassword.length < 6) {
-        return { error: 'New password must be at least 6 characters long' };
+    if (!passwordRegex.test(newPassword)) {
+        return { error: 'New password must be at least 8 characters long and contain at least one letter and one number' };
     }
 
     const payload = await getSession();

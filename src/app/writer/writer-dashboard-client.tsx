@@ -20,6 +20,17 @@ interface WriterDashboardClientProps {
 export function WriterDashboardClient({ blogs }: WriterDashboardClientProps) {
     const [statusFilter, setStatusFilter] = React.useState<string>('ALL');
 
+    if (blogs.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center py-24 text-center border rounded-lg border-dashed gap-4">
+                <p className="text-muted-foreground text-lg">Start writing your first blog.</p>
+                <Button asChild>
+                    <Link href="/writer/compose">Create Blog</Link>
+                </Button>
+            </div>
+        );
+    }
+
     const filteredBlogs = React.useMemo(() => {
         if (statusFilter === 'ALL') return blogs;
         return blogs.filter((b) => b.status === statusFilter);
