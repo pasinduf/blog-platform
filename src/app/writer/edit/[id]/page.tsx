@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
-// import { BlogService } from '@/services/blog-service';
+import { prisma } from '@/lib/prisma';
 
 export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
     const user = await getSession();
@@ -12,26 +12,22 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
         redirect('/login');
     }
     const { id } = await params;
-    // In a real app, we'd fetch the blog by ID using BlogService
-    // const blog = await BlogService.getBlogById(id);
-    // if (!blog) return <div>Not found</div>;
 
-    // Mocking data for UI MVP
-    const blog = {
-        id: id,
-        title: 'Understanding Next.js App Router',
-        content: '<p>Next.js 13 introduced the new App Router...</p>',
-        status: 'SUBMITTED',
-        aiAnalysis: {
-            clarityScore: 78,
-            strengths: ['Great topic choice', 'Concise intro'],
-            issues: ['Needs more code examples'],
-            suggestions: ['Add a section demonstrating Server Actions.'],
-        },
-        adminComments: [
-            { id: 'c1', content: 'Good start, but please expand on data fetching.', admin: { name: 'Bob Admin' } }
-        ]
-    };
+    const blog = await prisma.blog.findUnique({
+        where: { id },
+        include: {
+            adminComments: {
+                include: {
+                    admin: {
+                        select: { name: true }
+                    }
+                }
+            }
+        }
+    });
+
+    if (!blog) return <div>Not found</div>;
+    if (blog.authorId !== user.id) return <div>Unauthorized</div>;
 
     return (
         <div className="container mx-auto py-8">

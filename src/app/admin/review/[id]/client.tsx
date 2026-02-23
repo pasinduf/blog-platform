@@ -10,57 +10,71 @@ import { ArrowLeft, Wand2, CheckSquare, AlertTriangle } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { useAuth } from '@/lib/auth-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { generateAdminSummaryAction, requestRevisionAction, publishBlogAction } from '@/app/actions/blog';
+import { toast } from 'sonner';
 
-export function AdminReviewClient({ blogId }: { blogId: string }) {
+export function AdminReviewClient({ blog }: { blog: any }) {
     const router = useRouter();
     const { user } = useAuth();
     const [isGenerating, setIsGenerating] = useState(false);
-    const [aiSummary, setAiSummary] = useState<any>(null);
+    const [aiSummary, setAiSummary] = useState<any>(blog.aiSummary || null);
     const [comment, setComment] = useState('');
     const [isPublishing, setIsPublishing] = useState(false);
     const [isActioning, setIsActioning] = useState(false);
-
-    // MOCK BLOG DATA
-    const blog = {
-        id: blogId,
-        title: blogId === '102' ? 'Why TypeScript is Great' : 'Understanding Next.js App Router',
-        content: '<p>Next.js 13 introduced the new App Router. It uses React Server Components by default...</p>',
-        // Simulate blogId 102 as being written by the current admin user
-        author: { id: blogId === '102' ? user?.id : 'other-user-uuid', name: blogId === '102' ? 'Eve Writer (You)' : 'Alice Writer' },
-        status: 'SUBMITTED',
-    };
 
     const isOwnPost = Boolean(user && blog.author.id === user.id);
 
     const handleGenerateSummary = async () => {
         setIsGenerating(true);
-        // Simulate AI Service Delay
-        await new Promise(r => setTimeout(r, 1500));
-        setAiSummary({
-            summary: 'The author explains the basics of the Next.js App Router and its benefits.',
-            keyPoints: ['Server components default', 'New routing paradigms'],
-            risks: ['Might be too technical for beginners'],
-        });
-        setIsGenerating(false);
+        try {
+            const result = await generateAdminSummaryAction(blog.id);
+            if (result.error) {
+                toast.error(result.error);
+            } else if (result.success && result.summary) {
+                setAiSummary(result.summary);
+                toast.success('AI summary generated successfully.');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to generate summary.');
+        } finally {
+            setIsGenerating(false);
+        }
     };
 
     const handleAddCommentResubmit = async () => {
         setIsActioning(true);
-        // Simulate saving admin comment
-        await new Promise(r => setTimeout(r, 800));
-        setIsActioning(false);
-        console.log(`Added comment: ${comment}`);
-        alert('Comment sent to writer for revision.');
-        router.push('/admin');
+        try {
+            const result = await requestRevisionAction(blog.id, comment);
+            if (result.error) {
+                toast.error(result.error);
+            } else {
+                toast.success('Comment sent to writer for revision.');
+                router.push('/admin');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to request revision.');
+        } finally {
+            setIsActioning(false);
+        }
     };
 
     const handlePublish = async () => {
         setIsPublishing(true);
-        await new Promise(r => setTimeout(r, 1000));
-        setIsPublishing(false);
-        console.log('Published blog.');
-        alert('Blog Published successfully!');
-        router.push('/admin');
+        try {
+            const result = await publishBlogAction(blog.id);
+            if (result.error) {
+                toast.error(result.error);
+            } else {
+                toast.success('Blog Published successfully!');
+                router.push('/admin');
+            }
+        } catch (error) {
+            toast.error('Failed to publish blog.');
+        } finally {
+            setIsPublishing(false);
+        }
     };
 
     return (
@@ -146,7 +160,7 @@ export function AdminReviewClient({ blogId }: { blogId: string }) {
                                     className="min-h-[100px]"
                                 />
                                 <Button
-                                    className="w-full"
+                                    className="w-full mt-2"
                                     variant="secondary"
                                     onClick={handleAddCommentResubmit}
                                     disabled={!comment || isActioning || isOwnPost}

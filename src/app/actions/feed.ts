@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/prisma';
 
 export async function getPublicFeed(cursor?: string, limit = 9) {
-    console.log("cursor", cursor)
     const take = limit + 1;
     const dbBlogs = await prisma.blog.findMany({
         where: { status: 'PUBLISHED' },
@@ -22,17 +21,20 @@ export async function getPublicFeed(cursor?: string, limit = 9) {
         nextCursor = nextItem!.id;
     }
 
-    const formattedBlogs = dbBlogs.map(blog => ({
-        id: blog.id,
-        title: blog.title,
-        excerpt: blog.content.length > 150 ? blog.content.substring(0, 150) + '...' : blog.content,
-        updatedAt: blog.updatedAt.toISOString(),
-        author: {
-            id: blog.author.id,
-            name: blog.author.name
-        },
-        commentCount: blog._count.comments,
-    }));
+    const formattedBlogs = dbBlogs.map(blog => {
+        const plainText = blog.content.replace(/<[^>]*>?/gm, '').trim();
+        return {
+            id: blog.id,
+            title: blog.title,
+            excerpt: plainText.length > 150 ? plainText.substring(0, 150) + '...' : plainText,
+            updatedAt: blog.updatedAt.toISOString(),
+            author: {
+                id: blog.author.id,
+                name: blog.author.name
+            },
+            commentCount: blog._count.comments,
+        };
+    });
 
     return { blogs: formattedBlogs, nextCursor };
 }

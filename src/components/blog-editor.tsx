@@ -11,6 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Save, Send } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
+import { saveDraftAction, submitForReviewAction } from '@/app/actions/blog';
+import { toast } from 'sonner';
 
 // Using mock server action logic for the frontend
 export function BlogEditorForm({ initialData }: { initialData?: any }) {
@@ -23,33 +25,72 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
     const [isSaving, setIsSaving] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+    const [draftId, setDraftId] = useState<string | null>(initialData?.id || null);
+
     // Auto-save debounced effect would go here. For simplicity, we use manual save in MVP.
 
     const handleSaveDraft = async () => {
         if (!user) return;
+        if (!title.trim()) {
+            toast.error('Please enter a title before saving.');
+            return;
+        }
+
         setIsSaving(true);
-        // Simulate server action delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        // In real app: await BlogAction.saveDraft({ title, content, authorId: user.id })
-        setIsSaving(false);
-        console.log('Draft saved.');
+        try {
+            const result = await saveDraftAction(draftId, title, content);
+
+            if (result.error) {
+                toast.error(result.error);
+            } else if (result.success && result.blogId) {
+                toast.success('Draft saved successfully!');
+
+                if (!draftId) {
+                    setDraftId(result.blogId);
+                    // Update URL without full reload so the user continues editing
+                    window.history.replaceState(null, '', `/writer/edit/${result.blogId}`);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('An unexpected error occurred.');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleSubmitForReview = async () => {
-        setIsAnalyzing(true);
-        // Simulate server action AI analysis delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        // In real app: const analysis = await BlogAction.submitForReview({ id: initialData?.id, title, content })
+        if (!user) return;
+        if (!title.trim() || !content.trim() || content === '<p></p>') {
+            toast.error('Please enter a title and content before submitting.');
+            return;
+        }
 
-        // MOCK AI RESULTS
-        setAiAnalysis({
-            clarityScore: 85,
-            strengths: ['Clear introduction', 'Good use of markdown'],
-            issues: ['Abrupt conclusion'],
-            suggestions: ['Expand the summary section.'],
-        });
-        setStatus('SUBMITTED');
-        setIsAnalyzing(false);
+        setIsAnalyzing(true);
+        try {
+            const result = await submitForReviewAction(draftId, title, content);
+
+            if (result.error) {
+                toast.error(result.error);
+            } else if (result.success && result.blogId) {
+                toast.success('Submitted for review successfully!');
+
+                if (!draftId) {
+                    setDraftId(result.blogId);
+                    window.history.replaceState(null, '', `/writer/edit/${result.blogId}`);
+                }
+
+                if (result.aiAnalysis) {
+                    setAiAnalysis(result.aiAnalysis);
+                }
+                setStatus('SUBMITTED');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('An unexpected error occurred during submission.');
+        } finally {
+            setIsAnalyzing(false);
+        }
     };
 
     return (
@@ -95,7 +136,7 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                     <CardContent>
                         <div className="flex items-center justify-between">
                             <span className="text-sm font-medium">Current Status:</span>
-                            <Badge variant={status === 'PUBLISHED' ? 'default' : status === 'SUBMITTED' ? 'secondary' : 'outline'}>
+                            <Badge variant={status === 'PUBLISHED' ? 'success' : status === 'DRAFT' ? 'warning' : 'secondary'}>
                                 {status}
                             </Badge>
                         </div>
