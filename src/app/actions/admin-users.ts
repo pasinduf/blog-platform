@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { toast } from 'sonner';
 
-export async function getUsersAction(page = 1, limit = 10) {
+export async function getUsersAction(page = 1, limit = 10, searchName?: string) {
     const session = await getSession();
 
     if (!session || session.role !== 'ADMIN') {
@@ -14,8 +14,13 @@ export async function getUsersAction(page = 1, limit = 10) {
 
     const skip = (page - 1) * limit;
 
+    const where = searchName
+        ? { name: { contains: searchName, mode: 'insensitive' as const } }
+        : {};
+
     const [users, totalCount] = await Promise.all([
         prisma.user.findMany({
+            where,
             orderBy: {
                 createdAt: 'desc',
             },
@@ -30,7 +35,7 @@ export async function getUsersAction(page = 1, limit = 10) {
                 createdAt: true,
             },
         }),
-        prisma.user.count()
+        prisma.user.count({ where })
     ]);
 
     const totalPages = Math.ceil(totalCount / limit);

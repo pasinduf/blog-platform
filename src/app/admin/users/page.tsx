@@ -10,6 +10,9 @@ import { UserActionButtons } from './user-action-buttons';
 import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 type User = {
     id: string;
@@ -29,12 +32,14 @@ export default function AdminUsersPage() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [isPending, startTransition] = useTransition();
     const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [activeSearch, setActiveSearch] = useState('');
     const limit = 10;
 
-    const fetchPage = useCallback(async (page: number) => {
+    const fetchPage = useCallback(async (page: number, search: string = '') => {
         startTransition(async () => {
             try {
-                const data = await getUsersAction(page, limit);
+                const data = await getUsersAction(page, limit, Math.max(0, search.length) ? search : undefined);
                 setUsers(data.users);
                 setTotalPages(data.totalPages);
                 setCurrentPage(page);
@@ -52,22 +57,39 @@ export default function AdminUsersPage() {
             return;
         }
 
-        fetchPage(1);
-    }, [user, router, fetchPage]);
+        fetchPage(1, activeSearch);
+    }, [user, router, fetchPage, activeSearch]);
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            if (searchTerm === '' || searchTerm.trim().length >= 3) {
+                if (activeSearch !== searchTerm) {
+                    setActiveSearch(searchTerm);
+                }
+            }
+        }, 500);
+
+        return () => clearTimeout(handler);
+    }, [searchTerm, activeSearch]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage === currentPage) return;
-        fetchPage(newPage);
+        fetchPage(newPage, activeSearch);
+    };
+
+    const clearSearch = () => {
+        setSearchTerm('');
+        setActiveSearch('');
     };
 
     const handleApprove = async (userId: string) => {
         await approveUserAction(userId);
-        fetchPage(currentPage);
+        fetchPage(currentPage, activeSearch);
     };
 
     const handleReject = async (userId: string) => {
         await rejectUserAction(userId);
-        fetchPage(currentPage);
+        fetchPage(currentPage, activeSearch);
     };
 
     if (isInitialLoad) {
@@ -85,8 +107,29 @@ export default function AdminUsersPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Registered Users</CardTitle>
-                    <CardDescription>Review and manage access requests for the platform.</CardDescription>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <CardTitle>Registered Users</CardTitle>
+                            <CardDescription>Review and manage access requests for the platform.</CardDescription>
+                        </div>
+                        <div className="flex w-full sm:max-w-sm items-center space-x-2">
+                            <div className="relative w-full">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    type="text"
+                                    placeholder="Search by name (min 3 chars)..."
+                                    className="pl-8"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            {searchTerm && (
+                                <Button type="button" variant="ghost" onClick={clearSearch}>
+                                    Clear
+                                </Button>
+                            )}
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <div className="relative w-full overflow-auto" style={{ opacity: isPending ? 0.6 : 1 }}>

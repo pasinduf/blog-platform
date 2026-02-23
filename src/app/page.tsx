@@ -1,27 +1,8 @@
 import { PublicFeedClient } from '@/app/public-feed-client';
-import { prisma } from '@/lib/prisma';
+import { getPublicFeed } from '@/app/actions/feed';
 
 export default async function Home() {
-  const dbBlogs = await prisma.blog.findMany({
-    where: { status: 'PUBLISHED' },
-    include: {
-      author: { select: { id: true, name: true } },
-      _count: { select: { comments: true } },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-
-  const formattedBlogs = dbBlogs.map(blog => ({
-    id: blog.id,
-    title: blog.title,
-    excerpt: blog.content.length > 150 ? blog.content.substring(0, 150) + '...' : blog.content,
-    updatedAt: blog.updatedAt.toISOString(),
-    author: {
-      id: blog.author.id,
-      name: blog.author.name
-    },
-    commentCount: blog._count.comments,
-  }));
+  const initialData = await getPublicFeed();
 
   return (
     <div className="container mx-auto py-8">
@@ -30,7 +11,7 @@ export default async function Home() {
         <p className="text-muted-foreground mt-2">Discover the latest articles published by your organization members.</p>
       </div>
 
-      <PublicFeedClient blogs={formattedBlogs} />
+      <PublicFeedClient initialBlogs={initialData.blogs} initialNextCursor={initialData.nextCursor} />
     </div>
   );
 }

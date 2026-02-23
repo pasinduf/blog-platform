@@ -22,6 +22,9 @@ interface VirtualBlogListProps<T extends BaseBlog> {
     renderAction: (blog: T) => React.ReactNode;
     renderStatus?: (blog: T) => React.ReactNode;
     renderContent?: (blog: T) => React.ReactNode;
+    hasNextPage?: boolean;
+    isNextPageLoading?: boolean;
+    fetchNextPage?: () => void;
 }
 
 export function VirtualBlogList<T extends BaseBlog>({
@@ -29,6 +32,9 @@ export function VirtualBlogList<T extends BaseBlog>({
     renderAction,
     renderStatus,
     renderContent,
+    hasNextPage,
+    isNextPageLoading,
+    fetchNextPage,
 }: VirtualBlogListProps<T>) {
     const [searchQuery, setSearchQuery] = React.useState('');
     const [columns, setColumns] = React.useState(3);
@@ -57,10 +63,32 @@ export function VirtualBlogList<T extends BaseBlog>({
     // 2. Set up the window virtualizer
     const listRef = React.useRef<HTMLDivElement>(null);
     const virtualizer = useWindowVirtualizer({
-        count: Math.ceil(filteredBlogs.length / columns),
+        count: Math.ceil(filteredBlogs.length / columns) + (hasNextPage ? 1 : 0),
         estimateSize: () => 200, // Estimated height of each row in pixels
         overscan: 5,
     });
+
+    const virtualItems = virtualizer.getVirtualItems();
+
+    React.useEffect(() => {
+        const [lastItem] = [...virtualItems].reverse();
+        if (!lastItem) return;
+
+        if (
+            lastItem.index >= Math.ceil(filteredBlogs.length / columns) - 1 &&
+            hasNextPage &&
+            !isNextPageLoading
+        ) {
+            fetchNextPage?.();
+        }
+    }, [
+        hasNextPage,
+        fetchNextPage,
+        filteredBlogs.length,
+        isNextPageLoading,
+        virtualItems,
+        columns,
+    ]);
 
     return (
         <div className="flex flex-col gap-6" ref={listRef}>
@@ -83,9 +111,30 @@ export function VirtualBlogList<T extends BaseBlog>({
                     position: 'relative',
                 }}
             >
-                {virtualizer.getVirtualItems().map((virtualItem) => {
+                {virtualItems.map((virtualItem) => {
                     const rowStartIndex = virtualItem.index * columns;
+                    const isLoaderRow = rowStartIndex >= filteredBlogs.length;
                     const rowBlogs = filteredBlogs.slice(rowStartIndex, rowStartIndex + columns);
+
+                    if (isLoaderRow) {
+                        return (
+                            <div
+                                key={virtualItem.key}
+                                data-index={virtualItem.index}
+                                ref={virtualizer.measureElement}
+                                style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    transform: `translateY(${virtualItem.start}px)`,
+                                    paddingBottom: '24px',
+                                }}
+                            >
+                                <div className="py-6 text-center text-muted-foreground w-full">Loading more articles...</div>
+                            </div>
+                        );
+                    }
 
                     return (
                         <div
