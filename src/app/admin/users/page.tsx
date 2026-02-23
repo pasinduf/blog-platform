@@ -36,10 +36,10 @@ export default function AdminUsersPage() {
     const [activeSearch, setActiveSearch] = useState('');
     const limit = 10;
 
-    const fetchPage = useCallback(async (page: number, search: string = '') => {
+    const fetchUsers = useCallback(async (page: number, search: string = '') => {
         startTransition(async () => {
             try {
-                const data = await getUsersAction(page, limit, Math.max(0, search.length) ? search : undefined);
+                const data = await getUsersAction(page, limit, search);
                 setUsers(data.users);
                 setTotalPages(data.totalPages);
                 setCurrentPage(page);
@@ -57,8 +57,8 @@ export default function AdminUsersPage() {
             return;
         }
 
-        fetchPage(1, activeSearch);
-    }, [user, router, fetchPage, activeSearch]);
+        fetchUsers(1, activeSearch);
+    }, [user, router, fetchUsers, activeSearch]);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -74,7 +74,7 @@ export default function AdminUsersPage() {
 
     const handlePageChange = (newPage: number) => {
         if (newPage === currentPage) return;
-        fetchPage(newPage, activeSearch);
+        fetchUsers(newPage, activeSearch);
     };
 
     const clearSearch = () => {
@@ -84,12 +84,12 @@ export default function AdminUsersPage() {
 
     const handleApprove = async (userId: string) => {
         await approveUserAction(userId);
-        fetchPage(currentPage, activeSearch);
+        fetchUsers(currentPage, activeSearch);
     };
 
     const handleReject = async (userId: string) => {
         await rejectUserAction(userId);
-        fetchPage(currentPage, activeSearch);
+        fetchUsers(currentPage, activeSearch);
     };
 
     if (isInitialLoad) {
