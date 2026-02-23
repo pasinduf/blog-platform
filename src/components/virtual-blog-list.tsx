@@ -161,7 +161,7 @@ export function VirtualBlogList<T extends BaseBlog>({
                                                 {renderStatus ? (
                                                     renderStatus(blog)
                                                 ) : (
-                                                    blog.status && <Badge variant="secondary">{blog.status}</Badge>
+                                                    blog.status && <Badge variant={blog.status === 'PUBLISHED' ? 'success' : blog.status === 'DRAFT' ? 'warning' : 'secondary'}>{blog.status}</Badge>
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
