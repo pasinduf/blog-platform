@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition, useEffect, useCallback } from 'react';
-import { getUsersAction, approveUserAction, rejectUserAction } from '@/app/actions/admin-users';
+import { getUsers, approvePost, rejectPost } from '@/app/actions/admin-users';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -39,7 +39,7 @@ export default function AdminUsersPage() {
     const fetchUsers = useCallback(async (page: number, search: string = '') => {
         startTransition(async () => {
             try {
-                const data = await getUsersAction(page, limit, search);
+                const data = await getUsers(page, limit, search);
                 setUsers(data.users);
                 setTotalPages(data.totalPages);
                 setCurrentPage(page);
@@ -83,12 +83,12 @@ export default function AdminUsersPage() {
     };
 
     const handleApprove = async (userId: string) => {
-        await approveUserAction(userId);
+        await approvePost(userId);
         fetchUsers(currentPage, activeSearch);
     };
 
     const handleReject = async (userId: string) => {
-        await rejectUserAction(userId);
+        await rejectPost(userId);
         fetchUsers(currentPage, activeSearch);
     };
 

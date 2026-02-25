@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { toast } from 'sonner';
 
-export async function getUsersAction(page = 1, limit = 10, searchName?: string) {
+export async function getUsers(page = 1, limit = 10, searchName?: string) {
     const session = await getSession();
 
     if (!session || session.role !== 'ADMIN') {
@@ -47,7 +47,7 @@ export async function getUsersAction(page = 1, limit = 10, searchName?: string) 
     };
 }
 
-export async function approveUserAction(userId: string) {
+export async function approvePost(userId: string) {
     const session = await getSession();
 
     if (!session || session.role !== 'ADMIN') {
@@ -68,7 +68,7 @@ export async function approveUserAction(userId: string) {
     }
 }
 
-export async function rejectUserAction(userId: string) {
+export async function rejectPost(userId: string) {
     const session = await getSession();
 
     if (!session || session.role !== 'ADMIN') {
@@ -87,4 +87,43 @@ export async function rejectUserAction(userId: string) {
         toast.error('Failed to reject user');
         return { error: 'Failed to reject user' };
     }
+}
+
+
+export async function getPendingReviewBlogs(searchQuery: string = '') {
+    const session = await getSession();
+
+    if (!session || session.role !== 'ADMIN') {
+        throw new Error('Unauthorized');
+    }
+
+    const whereClause: any = { status: 'SUBMITTED' };
+
+    if (searchQuery.trim().length >= 3) {
+        whereClause.title = {
+            contains: searchQuery.trim(),
+            mode: 'insensitive',
+        };
+    }
+
+    const dbBlogs = await prisma.blog.findMany({
+        where: whereClause,
+        include: {
+            author: { select: { id: true, name: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+    });
+
+    return dbBlogs.map((blog) => ({
+        id: blog.id,
+        title: blog.title,
+        content: blog.content,
+        status: blog.status,
+        updatedAt: blog.updatedAt,
+        author: {
+            id: blog.author.id,
+            name: blog.author.name,
+        },
+    }));
+
 }
