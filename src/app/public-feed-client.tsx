@@ -75,7 +75,7 @@ export function PublicFeedClient({ initialBlogs, initialNextCursor }: PublicFeed
             <div className="flex justify-between items-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-800">Latest Articles</h2>
                 <div className="text-sm text-gray-500">
-                    Showing 1 of 5 articles
+                    Showing {regularBlogs.length} of {blogs.length} articles
                 </div>
             </div>
 

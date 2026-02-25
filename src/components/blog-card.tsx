@@ -1,0 +1,130 @@
+"use client";
+
+import Link from "next/link";
+import Image from "next/image";
+import { CalendarDays, User, Clock, ArrowRight } from "lucide-react";
+import { formatDate } from "@/lib/utils";
+
+interface BlogCardProps {
+    blog: {
+        id: string;
+        title: string;
+        excerpt?: string;
+        updatedAt: Date;
+        author?: { id?: string; name: string };
+        commentCount?: number;
+        coverImage?: string;
+    };
+    compact?: boolean;
+}
+
+export default function BlogCard({ blog, compact = false }: BlogCardProps) {
+
+    const readingTime = Math.ceil((blog.excerpt?.length || 300) / 200);
+
+    if (compact) {
+        return (
+            <div className="h-full">
+                <div className="relative h-40 overflow-hidden">
+                    {blog.coverImage ? (
+                        <Image src={blog.coverImage} alt={blog.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                            <span className="text-3xl text-gray-400">📝</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* Content */}
+                <div className="p-4">
+                    <h3 className="font-bold text-gray-800 mb-2 line-clamp-2 text-sm">{blog.title}</h3>
+                    <p className="text-gray-600 text-xs line-clamp-2 mb-3">{blog.excerpt || "No excerpt available"}</p>
+                    <Link href={`/article/${blog.id}`} className="text-blue-600 hover:text-blue-700 text-sm font-medium inline-flex items-center gap-1">
+                        Read more
+                        <ArrowRight className="w-3 h-3" />
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+
+    return (
+        <article className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-100">
+            <div className="relative h-48 overflow-hidden">
+                {blog.coverImage ? (
+                    <Image
+                        src={blog.coverImage}
+                        alt={blog.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                        <span className="text-4xl text-gray-400">📝</span>
+                    </div>
+                )}
+                {/* <div className="absolute top-4 left-4">
+          <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-sm font-medium text-blue-700 rounded-full">{post.category.name}</span>
+        </div> */}
+            </div>
+
+            <div className="p-6">
+                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
+                    {blog.updatedAt &&
+                        <div className="flex items-center gap-1">
+                            <CalendarDays className="w-4 h-4" />
+                            <span>{formatDate(blog.updatedAt)}</span>
+                        </div>
+                    }
+                    <div className="flex items-center gap-1">
+                        <User className="w-4 h-4" />
+                        <span>{blog.author?.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        <span>{readingTime} min read</span>
+                    </div>
+                </div>
+
+                <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    <Link href={`/article/${blog.id}`}>{blog.title}</Link>
+                </h3>
+
+                {blog.excerpt && <p className="text-gray-600 mb-4 line-clamp-3">{blog.excerpt}</p>}
+
+                {/* Read More */}
+                <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                    <Link href={`/article/${blog.id}`} className="inline-flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 group/link">
+                        Read Article
+                        <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                    </Link>
+
+                    <div className="flex items-center gap-2">
+                        <button className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full hover:bg-red-50">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                />
+                            </svg>
+                        </button>
+                        <button className="p-2 text-gray-400 hover:text-blue-500 transition-colors rounded-full hover:bg-blue-50">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={1.5}
+                                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    );
+}

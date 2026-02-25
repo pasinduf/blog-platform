@@ -2,7 +2,7 @@ import { PublicFeedClient } from '@/app/public-feed-client';
 import { getPublicFeed } from '@/app/actions/feed';
 
 export default async function Home() {
-  const initialData: any = await getPublicFeed();
+  const initialData: any = await getPublicFeed(undefined, 9);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
