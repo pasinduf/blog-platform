@@ -19,13 +19,14 @@ interface BlogCardProps {
         coverImage?: string | null;
     };
     renderAction?: (blog: any) => React.ReactNode;
+    renderContent?: (blog: any) => React.ReactNode;
     compact?: boolean;
     hideAuthor?: boolean;
     hideReadingTime?: boolean;
     showStatus?: boolean;
 }
 
-export default function BlogCard({ blog, renderAction, compact = false, hideAuthor = false, hideReadingTime = false, showStatus = false }: BlogCardProps) {
+export default function BlogCard({ blog, renderAction, renderContent, compact = false, hideAuthor = false, hideReadingTime = false, showStatus = false }: BlogCardProps) {
 
     const readingTime = calculateReadingTime(blog.content);
 
@@ -108,6 +109,13 @@ export default function BlogCard({ blog, renderAction, compact = false, hideAuth
                 <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
                     <Link href={`/article/${blog.id}`}>{blog.title}</Link>
                 </h3>
+
+
+                {renderContent && (
+                    <div className="flex-1">
+                        {renderContent(blog)}
+                    </div>
+                )}
 
                 {blog.excerpt && <p className="text-gray-600 mb-4 line-clamp-3">{blog.excerpt}</p>}
 

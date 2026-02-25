@@ -85,11 +85,6 @@ export function PublicFeedClient({ initialBlogs, initialNextCursor }: PublicFeed
                 isNextPageLoading={isLoadingNext}
                 fetchNextPage={fetchNextPage}
                 maxColumns={2}
-                renderContent={(blog) => (
-                    <p className="text-muted-foreground line-clamp-3">
-                        {blog.excerpt}
-                    </p>
-                )}
             />
         </>
     );

@@ -33,6 +33,7 @@ interface VirtualBlogListProps<T extends BaseBlog> {
 export function VirtualBlogList<T extends BaseBlog>({
     blogs,
     renderAction,
+    renderContent,
     hasNextPage,
     isNextPageLoading,
     fetchNextPage,
@@ -64,6 +65,7 @@ export function VirtualBlogList<T extends BaseBlog>({
                         key={blog.id}
                         blog={blog}
                         renderAction={renderAction}
+                        renderContent={renderContent}
                         compact={compact}
                         hideAuthor={hideAuthor}
                         hideReadingTime={hideReadingTime}
