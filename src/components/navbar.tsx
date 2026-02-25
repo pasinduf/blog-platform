@@ -11,33 +11,29 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, KeyRound } from 'lucide-react';
+import { LogOut, KeyRound, PenSquare } from 'lucide-react';
 import { logoutAction } from '@/app/actions/auth';
-import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { UserCircle } from 'lucide-react';
 
 export function Navbar() {
     const { user, role } = useAuth();
-    const router = useRouter();
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <nav className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                 <div className="flex items-center gap-6">
-                    <Link href="/" className="font-bold text-xl tracking-tight">
-                        BlogMVP
+                    <Link href="/" className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md flex items-center justify-center">
+                            <span className="text-white font-bold">B</span>
+                        </div>
+                        <span className="font-bold text-xl tracking-tight">BlogHub</span>
                     </Link>
                     <div className="hidden md:flex items-center gap-4 text-sm font-medium">
                         {user && (
-                            <>
-                                <Link href="/writer" className="text-muted-foreground hover:text-primary transition-colors">
-                                    Dashboard
-                                </Link>
-                                <Link href="/writer/compose" className="text-muted-foreground hover:text-primary transition-colors">
-                                    Compose
-                                </Link>
-                            </>
+                            <Link href="/writer" className="text-muted-foreground hover:text-primary transition-colors">
+                                Dashboard
+                            </Link>
                         )}
                         {role === 'ADMIN' && (
                             <>
@@ -55,6 +51,15 @@ export function Navbar() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
+                    {user &&
+                        <Link
+                            href="/writer/compose"
+                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium rounded-md hover:opacity-90 transition-opacity"
+                        >
+                            <PenSquare className="w-4 h-4" />
+                            Write Article
+                        </Link>
+                    }
                     <ThemeToggle />
                     {user ? (
                         <DropdownMenu>

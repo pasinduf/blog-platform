@@ -20,7 +20,6 @@ export interface BaseBlog {
 interface VirtualBlogListProps<T extends BaseBlog> {
     blogs: T[];
     renderAction: (blog: T) => React.ReactNode;
-    renderStatus?: (blog: T) => React.ReactNode;
     renderContent?: (blog: T) => React.ReactNode;
     hasNextPage?: boolean;
     isNextPageLoading?: boolean;
@@ -31,7 +30,6 @@ interface VirtualBlogListProps<T extends BaseBlog> {
 export function VirtualBlogList<T extends BaseBlog>({
     blogs,
     renderAction,
-    renderStatus,
     renderContent,
     hasNextPage,
     isNextPageLoading,
@@ -160,11 +158,7 @@ export function VirtualBlogList<T extends BaseBlog>({
                                                 <CardTitle className="text-xl line-clamp-2">
                                                     {blog.title}
                                                 </CardTitle>
-                                                {renderStatus ? (
-                                                    renderStatus(blog)
-                                                ) : (
-                                                    blog.status && <Badge variant={blog.status === 'PUBLISHED' ? 'success' : blog.status === 'DRAFT' ? 'warning' : 'secondary'}>{blog.status}</Badge>
-                                                )}
+                                                {blog.status && <Badge variant={blog.status === 'PUBLISHED' ? 'success' : blog.status === 'DRAFT' ? 'warning' : 'secondary'}>{blog.status}</Badge>}
                                             </div>
                                             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
                                                 {blog.author && (

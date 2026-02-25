@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Blog Platform",
-  description: "Blog Platform",
+  title: "Blog Hub",
+  description: "Blog Hub",
 };
 
 import { AuthProvider } from "@/lib/auth-context";

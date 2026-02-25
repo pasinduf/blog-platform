@@ -21,7 +21,6 @@ export function PublicFeedClient({ initialBlogs, initialNextCursor }: PublicFeed
         setIsLoadingNext(true);
         try {
             const data = await getPublicFeed(nextCursor, 9);
-            console.log("data", data)
             setBlogs(prev => [...prev, ...data.blogs]);
             setNextCursor(data.nextCursor);
         } catch (error) {
@@ -38,7 +37,6 @@ export function PublicFeedClient({ initialBlogs, initialNextCursor }: PublicFeed
             isNextPageLoading={isLoadingNext}
             fetchNextPage={fetchNextPage}
             maxColumns={2}
-            renderStatus={() => null}
             renderContent={(blog) => (
                 <p className="text-muted-foreground line-clamp-3">
                     {blog.excerpt}

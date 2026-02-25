@@ -28,9 +28,6 @@ export default async function WriterDashboard() {
         <div className="container mx-auto py-8">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">Writer Dashboard</h1>
-                <Button asChild>
-                    <Link href="/writer/compose">Create New Post</Link>
-                </Button>
             </div>
 
             <WriterDashboardClient blogs={formattedBlogs} />
