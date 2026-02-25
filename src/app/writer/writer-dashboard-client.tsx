@@ -12,6 +12,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { X } from 'lucide-react';
+import SearchBar from '@/components/search-bar';
 
 interface WriterDashboardClientProps {
     blogs: BaseBlog[];
@@ -19,6 +20,7 @@ interface WriterDashboardClientProps {
 
 export function WriterDashboardClient({ blogs }: WriterDashboardClientProps) {
     const [statusFilter, setStatusFilter] = React.useState<string>('ALL');
+    const [searchQuery, setSearchQuery] = React.useState<string>('');
 
     if (blogs.length === 0) {
         return (
@@ -32,42 +34,63 @@ export function WriterDashboardClient({ blogs }: WriterDashboardClientProps) {
     }
 
     const filteredBlogs = React.useMemo(() => {
-        if (statusFilter === 'ALL') return blogs;
-        return blogs.filter((b) => b.status === statusFilter);
-    }, [blogs, statusFilter]);
+        let result = blogs;
+        if (statusFilter !== 'ALL') {
+            result = result.filter((b) => b.status === statusFilter);
+        }
+        if (searchQuery.trim()) {
+            const lowerQuery = searchQuery.toLowerCase();
+            result = result.filter((blog) =>
+                blog.title.toLowerCase().includes(lowerQuery)
+            );
+        }
+        return result;
+    }, [blogs, statusFilter, searchQuery]);
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Filter by status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="ALL">All Statuses</SelectItem>
-                            <SelectItem value="DRAFT">Draft</SelectItem>
-                            <SelectItem value="SUBMITTED">Submitted</SelectItem>
-                            <SelectItem value="PUBLISHED">Published</SelectItem>
-                        </SelectContent>
-                    </Select>
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-4 w-full md:w-auto flex-1">
+                    <SearchBar searchTerm={searchQuery} setSearchTerm={setSearchQuery} />
 
-                    {statusFilter !== 'ALL' && (
+
+                    {/* {(statusFilter !== 'ALL' || searchQuery) && (
                         <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => setStatusFilter('ALL')}
+                            onClick={() => {
+                                setStatusFilter('ALL');
+                                setSearchQuery('');
+                            }}
                             className="h-8 px-2 lg:px-3 text-muted-foreground"
                         >
                             Reset
                             <X className="ml-2 h-4 w-4" />
                         </Button>
-                    )}
+                    )} */}
                 </div>
-                <div className="text-sm text-muted-foreground">
-                    Showing {filteredBlogs.length} {filteredBlogs.length === 1 ? 'article' : 'articles'}
+                <div>
+
+                    <div>
+                        <Select value={statusFilter} onValueChange={setStatusFilter}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Filter by status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="ALL">All Statuses</SelectItem>
+                                <SelectItem value="DRAFT">Draft</SelectItem>
+                                <SelectItem value="SUBMITTED">Submitted</SelectItem>
+                                <SelectItem value="PUBLISHED">Published</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                    </div>
                 </div>
+
             </div>
+            {/* <span>
+                Showing {filteredBlogs.length} {filteredBlogs.length === 1 ? 'article' : 'articles'}
+            </span> */}
 
             <VirtualBlogList
                 blogs={filteredBlogs}
