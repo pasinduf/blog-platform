@@ -31,19 +31,20 @@ export function Navbar() {
                     </Link>
                     <div className="hidden md:flex items-center gap-4 text-sm font-medium">
                         {user && (
-                            <Link href="/writer" className="text-muted-foreground hover:text-primary transition-colors">
+                            <Link
+                                href="/writer" className="text-muted-foreground hover:text-primary transition-colors text-lg">
                                 Dashboard
                             </Link>
                         )}
                         {role === 'ADMIN' && (
                             <>
-                                <Link href="/admin" className="text-muted-foreground hover:text-primary transition-colors">
+                                <Link href="/admin" className="text-muted-foreground hover:text-primary transition-colors text-lg">
                                     Review Queue
                                 </Link>
-                                <Link href="/admin/leaderboard" className="text-muted-foreground hover:text-primary transition-colors">
+                                <Link href="/admin/leaderboard" className="text-muted-foreground hover:text-primary transition-colors text-lg">
                                     Leaderboard
                                 </Link>
-                                <Link href="/admin/users" className="text-muted-foreground hover:text-primary transition-colors">
+                                <Link href="/admin/users" className="text-muted-foreground hover:text-primary transition-colors text-lg">
                                     Users
                                 </Link>
                             </>
