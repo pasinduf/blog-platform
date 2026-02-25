@@ -27,8 +27,6 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
 
     const [draftId, setDraftId] = useState<string | null>(initialData?.id || null);
 
-    // Auto-save debounced effect would go here. For simplicity, we use manual save in MVP.
-
     const handleSaveDraft = async () => {
         if (!user) return;
         if (!title.trim()) {

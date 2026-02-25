@@ -30,7 +30,6 @@ export default async function WriterDashboard() {
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">Writer Dashboard</h1>
             </div>
-
             <WriterDashboardClient blogs={formattedBlogs} />
         </div>
     );
