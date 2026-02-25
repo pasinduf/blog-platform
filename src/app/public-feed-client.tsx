@@ -90,11 +90,6 @@ export function PublicFeedClient({ initialBlogs, initialNextCursor }: PublicFeed
                         {blog.excerpt}
                     </p>
                 )}
-                renderAction={(blog) => (
-                    <Button asChild variant="outline">
-                        <Link href={`/article/${blog.id}`}>Read More</Link>
-                    </Button>
-                )}
             />
         </>
     );

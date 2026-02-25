@@ -114,12 +114,12 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                 </div>
 
                 <div className="flex gap-4">
-                    <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving || status === 'SUBMITTED' || status === 'PUBLISHED'}>
+                    <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving}>
                         {isSaving && <Spinner className="mr-2 h-4 w-4" />}
                         <Save className="mr-2 h-4 w-4" />
                         Save Draft
                     </Button>
-                    <Button onClick={handleSubmitForReview} disabled={isAnalyzing || isSaving || !title || !content || status === 'SUBMITTED' || status === 'PUBLISHED'}>
+                    <Button onClick={handleSubmitForReview} disabled={isAnalyzing || isSaving || !title || !content}>
                         {isAnalyzing && <Spinner className="mr-2 h-4 w-4" />}
                         <Send className="mr-2 h-4 w-4" />
                         Submit for Review

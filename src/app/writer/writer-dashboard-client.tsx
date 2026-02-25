@@ -71,6 +71,7 @@ export function WriterDashboardClient({ blogs }: WriterDashboardClientProps) {
 
             <VirtualBlogList
                 blogs={filteredBlogs}
+                maxColumns={3}
                 renderContent={(blog: any) => (
                     <p className="text-sm text-muted-foreground">
                         {blog.status === 'DRAFT' && 'This post is currently a draft. You can continue editing it.'}
@@ -85,6 +86,9 @@ export function WriterDashboardClient({ blogs }: WriterDashboardClientProps) {
                         </Link>
                     </Button>
                 )}
+                hideAuthor={true}
+                hideReadingTime={true}
+                showStatus={true}
             />
         </div>
     );

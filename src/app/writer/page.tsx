@@ -21,7 +21,8 @@ export default async function WriterDashboard() {
         id: blog.id,
         title: blog.title,
         status: blog.status,
-        updatedAt: blog.updatedAt.toISOString(),
+        updatedAt: blog.updatedAt,
+        content: blog.content,
     }));
 
     return (

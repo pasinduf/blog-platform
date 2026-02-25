@@ -14,6 +14,7 @@ export function ReviewQueueClient({ blogs, currentUserId }: ReviewQueueClientPro
     return (
         <VirtualBlogList
             blogs={blogs}
+            maxColumns={3}
             renderContent={() => (
                 <p className="text-sm text-muted-foreground">
                     Needs admin review, AI summary, and potential feedback.
@@ -26,6 +27,7 @@ export function ReviewQueueClient({ blogs, currentUserId }: ReviewQueueClientPro
                     </Link>
                 </Button>
             )}
+            hideReadingTime={true}
         />
     );
 }

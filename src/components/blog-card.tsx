@@ -3,24 +3,31 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CalendarDays, User, Clock, ArrowRight } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { calculateReadingTime, formatDate } from "@/lib/utils";
+import { Badge } from "./ui/badge";
 
 interface BlogCardProps {
     blog: {
         id: string;
         title: string;
+        content: string;
+        status: string;
         excerpt?: string;
         updatedAt: Date;
         author?: { id?: string; name: string };
         commentCount?: number;
-        coverImage?: string;
+        coverImage?: string | null;
     };
+    renderAction?: (blog: any) => React.ReactNode;
     compact?: boolean;
+    hideAuthor?: boolean;
+    hideReadingTime?: boolean;
+    showStatus?: boolean;
 }
 
-export default function BlogCard({ blog, compact = false }: BlogCardProps) {
+export default function BlogCard({ blog, renderAction, compact = false, hideAuthor = false, hideReadingTime = false, showStatus = false }: BlogCardProps) {
 
-    const readingTime = Math.ceil((blog.excerpt?.length || 300) / 200);
+    const readingTime = calculateReadingTime(blog.content);
 
     if (compact) {
         return (
@@ -48,7 +55,6 @@ export default function BlogCard({ blog, compact = false }: BlogCardProps) {
         );
     }
 
-
     return (
         <article className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-100">
             <div className="relative h-48 overflow-hidden">
@@ -66,8 +72,8 @@ export default function BlogCard({ blog, compact = false }: BlogCardProps) {
                     </div>
                 )}
                 {/* <div className="absolute top-4 left-4">
-          <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-sm font-medium text-blue-700 rounded-full">{post.category.name}</span>
-        </div> */}
+                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-sm font-medium text-blue-700 rounded-full">{post.category.name}</span>
+                    </div> */}
             </div>
 
             <div className="p-6">
@@ -78,14 +84,25 @@ export default function BlogCard({ blog, compact = false }: BlogCardProps) {
                             <span>{formatDate(blog.updatedAt)}</span>
                         </div>
                     }
-                    <div className="flex items-center gap-1">
-                        <User className="w-4 h-4" />
-                        <span>{blog.author?.name}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{readingTime} min read</span>
-                    </div>
+
+                    {!hideAuthor &&
+                        <div className="flex items-center gap-1">
+                            <User className="w-4 h-4" />
+                            <span>{blog.author?.name}</span>
+                        </div>
+                    }
+
+                    {!hideReadingTime &&
+                        <div className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            <span>{readingTime}min read</span>
+                        </div>
+                    }
+                    {showStatus &&
+                        <div className="ml-auto flex items-center">
+                            <Badge variant={blog.status === 'PUBLISHED' ? 'success' : blog.status === 'DRAFT' ? 'warning' : 'secondary'}>{blog.status}</Badge>
+                        </div>
+                    }
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
@@ -94,36 +111,45 @@ export default function BlogCard({ blog, compact = false }: BlogCardProps) {
 
                 {blog.excerpt && <p className="text-gray-600 mb-4 line-clamp-3">{blog.excerpt}</p>}
 
-                {/* Read More */}
-                <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                    <Link href={`/article/${blog.id}`} className="inline-flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 group/link">
-                        Read Article
-                        <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                    </Link>
-
-                    <div className="flex items-center gap-2">
-                        <button className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full hover:bg-red-50">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                                />
-                            </svg>
-                        </button>
-                        <button className="p-2 text-gray-400 hover:text-blue-500 transition-colors rounded-full hover:bg-blue-50">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                                />
-                            </svg>
-                        </button>
+                {renderAction ?
+                    <div className="flex justify-between items-center">
+                        {/* <div className="text-sm font-medium text-muted-foreground">
+                            {blog.commentCount !== undefined && `${blog.commentCount} Comments`}
+                        </div> */}
+                        <div className="flex-1 flex justify-end mt-4">
+                            {renderAction(blog)}
+                        </div>
                     </div>
-                </div>
+                    :
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                        <Link href={`/article/${blog.id}`} className="inline-flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 group/link">
+                            Read Article
+                            <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                        </Link>
+                        <div className="flex items-center gap-2">
+                            <button className="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-full hover:bg-red-50">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={1.5}
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                    />
+                                </svg>
+                            </button>
+                            <button className="p-2 text-gray-400 hover:text-blue-500 transition-colors rounded-full hover:bg-blue-50">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={1.5}
+                                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                }
             </div>
         </article>
     );

@@ -7,7 +7,7 @@ import { getSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Image from "next/image";
-import { formatDate } from '@/lib/utils';
+import { calculateReadingTime, formatDate } from '@/lib/utils';
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getSession();
@@ -85,8 +85,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
         };
     });
 
-    // Generate reading time from content
-    const readingTime = Math.ceil((JSON.stringify(blog.content).length || 3000) / 1000);
+    const readingTime = calculateReadingTime(blog?.content);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">

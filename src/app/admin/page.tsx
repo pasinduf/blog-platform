@@ -22,8 +22,9 @@ export default async function AdminDashboard() {
     const formattedBlogs = dbBlogs.map((blog) => ({
         id: blog.id,
         title: blog.title,
+        content: blog.content,
         status: blog.status,
-        updatedAt: blog.updatedAt.toISOString(),
+        updatedAt: blog.updatedAt,
         author: {
             id: blog.author.id,
             name: blog.author.name,

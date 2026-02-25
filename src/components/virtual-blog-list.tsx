@@ -1,14 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import BlogCard from './blog-card';
 
 export interface BaseBlog {
     id: string;
     title: string;
-    status?: string;
+    content: string;
+    status: string;
+    coverImage?: string | null;
     excerpt?: string;
     updatedAt: Date;
     author?: { id?: string; name: string };
@@ -17,22 +18,29 @@ export interface BaseBlog {
 
 interface VirtualBlogListProps<T extends BaseBlog> {
     blogs: T[];
-    renderAction: (blog: T) => React.ReactNode;
+    renderAction?: (blog: T) => React.ReactNode;
     renderContent?: (blog: T) => React.ReactNode;
     hasNextPage?: boolean;
     isNextPageLoading?: boolean;
     fetchNextPage?: () => void;
     maxColumns?: number;
+    compact?: boolean;
+    hideAuthor?: boolean;
+    hideReadingTime?: boolean;
+    showStatus?: boolean;
 }
 
 export function VirtualBlogList<T extends BaseBlog>({
     blogs,
     renderAction,
-    renderContent,
     hasNextPage,
     isNextPageLoading,
     fetchNextPage,
     maxColumns = 2,
+    compact = false,
+    hideAuthor = false,
+    hideReadingTime = false,
+    showStatus = false,
 }: VirtualBlogListProps<T>) {
     const [columns, setColumns] = React.useState(maxColumns);
 
@@ -52,7 +60,15 @@ export function VirtualBlogList<T extends BaseBlog>({
         <div className="flex flex-col gap-8">
             <div className={`grid gap-6 ${columns === 1 ? 'grid-cols-1' : columns === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
                 {blogs.map((blog) => (
-                    <BlogCard key={blog.id} blog={blog} />
+                    <BlogCard
+                        key={blog.id}
+                        blog={blog}
+                        renderAction={renderAction}
+                        compact={compact}
+                        hideAuthor={hideAuthor}
+                        hideReadingTime={hideReadingTime}
+                        showStatus={showStatus}
+                    />
                 ))}
             </div>
 

@@ -32,3 +32,10 @@ export function formatDate(date: Date): string {
     year: "numeric",
   });
 };
+
+
+export function calculateReadingTime(content: string): number {
+  const wordCount = content.split(/\s+/).length || 200;
+  const wordsPerMinute = 200; // Average reading speed
+  return Math.ceil(wordCount / wordsPerMinute);
+}

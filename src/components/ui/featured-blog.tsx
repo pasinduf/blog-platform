@@ -3,21 +3,24 @@
 import Link from "next/link";
 import Image from "next/image";
 import { CalendarDays, User, ArrowRight } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { calculateReadingTime, formatDate } from "@/lib/utils";
 
 interface FeaturedBlogProps {
   blog: {
     id: string;
     title: string;
+    content: string;
     excerpt?: string;
     updatedAt: Date;
     author?: { id?: string; name: string };
     commentCount?: number;
-    coverImage?: string;
+    coverImage?: string | null;
   };
 }
 
 export default function FeaturedBlog({ blog }: FeaturedBlogProps) {
+
+  const readingTime = calculateReadingTime(blog.content);
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl overflow-hidden shadow-xl border border-blue-100">
@@ -75,11 +78,11 @@ export default function FeaturedBlog({ blog }: FeaturedBlogProps) {
           {/* Stats */}
           <div className="flex items-center gap-6 mt-8 pt-8 border-t border-gray-200">
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-800">5</div>
+              <div className="text-2xl font-bold text-gray-800">{readingTime}</div>
               <div className="text-sm text-gray-500">Min Read</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-800">42</div>
+              <div className="text-2xl font-bold text-gray-800">{blog.commentCount}</div>
               <div className="text-sm text-gray-500">Comments</div>
             </div>
             <div className="text-center">
