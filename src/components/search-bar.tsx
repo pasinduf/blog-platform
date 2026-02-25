@@ -11,7 +11,7 @@ export interface SearchBarProps {
 export default function SearchBar({ searchTerm, setSearchTerm }: SearchBarProps) {
 
     return (
-        <div className="relative flex-1 md:flex-none">
+        <div className="relative w-full md:w-[28rem]">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
                 type="text"

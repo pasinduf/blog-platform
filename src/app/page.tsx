@@ -17,24 +17,6 @@ export default async function Home() {
       </section>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-
-
-        <div className="mb-12 bg-white rounded-2xl shadow-lg px-6 py-4">
-          <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
-            <div className="w-full md:w-auto">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Find Your Next Read</h2>
-              <p className="text-gray-600">Browse through published articles</p>
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-
-            </div>
-          </div>
-        </div>
-
-        <h1 className="text-3xl font-bold">Public Feed</h1>
-        <p className="text-muted-foreground mt-2">Discover the latest articles published by your organization members.</p>
-
         <PublicFeedClient initialBlogs={initialData.blogs} initialNextCursor={initialData.nextCursor} />
       </div>
 

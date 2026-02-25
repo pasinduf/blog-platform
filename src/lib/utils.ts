@@ -24,3 +24,11 @@ export function generateRandomPassword(): string {
   // Shuffle the string
   return pass.split('').sort(() => 0.5 - Math.random()).join('');
 }
+
+export function formatDate(date: Date): string {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+};

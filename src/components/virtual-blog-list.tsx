@@ -2,8 +2,6 @@
 
 import * as React from 'react';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -12,7 +10,7 @@ export interface BaseBlog {
     title: string;
     status?: string;
     excerpt?: string;
-    updatedAt: string;
+    updatedAt: Date;
     author?: { id?: string; name: string };
     commentCount?: number;
 }
@@ -36,7 +34,6 @@ export function VirtualBlogList<T extends BaseBlog>({
     fetchNextPage,
     maxColumns = 2,
 }: VirtualBlogListProps<T>) {
-    const [searchQuery, setSearchQuery] = React.useState('');
     const [columns, setColumns] = React.useState(maxColumns);
 
     // Update columns based on window width
@@ -51,19 +48,10 @@ export function VirtualBlogList<T extends BaseBlog>({
         return () => window.removeEventListener('resize', updateColumns);
     }, [maxColumns]);
 
-    // 1. Filter blogs based on search query
-    const filteredBlogs = React.useMemo(() => {
-        if (!searchQuery.trim()) return blogs;
-        const lowerQuery = searchQuery.toLowerCase();
-        return blogs.filter((blog) =>
-            blog.title.toLowerCase().includes(lowerQuery)
-        );
-    }, [blogs, searchQuery]);
-
     // 2. Set up the window virtualizer
     const listRef = React.useRef<HTMLDivElement>(null);
     const virtualizer = useWindowVirtualizer({
-        count: Math.ceil(filteredBlogs.length / columns) + (hasNextPage ? 1 : 0),
+        count: Math.ceil(blogs.length / columns) + (hasNextPage ? 1 : 0),
         estimateSize: () => 200, // Estimated height of each row in pixels
         overscan: 5,
     });
@@ -75,7 +63,7 @@ export function VirtualBlogList<T extends BaseBlog>({
         if (!lastItem) return;
 
         if (
-            lastItem.index >= Math.ceil(filteredBlogs.length / columns) - 1 &&
+            lastItem.index >= Math.ceil(blogs.length / columns) - 1 &&
             hasNextPage &&
             !isNextPageLoading
         ) {
@@ -84,7 +72,7 @@ export function VirtualBlogList<T extends BaseBlog>({
     }, [
         hasNextPage,
         fetchNextPage,
-        filteredBlogs.length,
+        blogs.length,
         isNextPageLoading,
         virtualItems,
         columns,
@@ -92,17 +80,6 @@ export function VirtualBlogList<T extends BaseBlog>({
 
     return (
         <div className="flex flex-col gap-6" ref={listRef}>
-            {/* Search Input */}
-            <div className="relative w-full max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                    placeholder="Search by title..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9"
-                />
-            </div>
-
             {/* Virtualized Container */}
             <div
                 style={{
@@ -113,8 +90,8 @@ export function VirtualBlogList<T extends BaseBlog>({
             >
                 {virtualItems.map((virtualItem) => {
                     const rowStartIndex = virtualItem.index * columns;
-                    const isLoaderRow = rowStartIndex >= filteredBlogs.length;
-                    const rowBlogs = filteredBlogs.slice(rowStartIndex, rowStartIndex + columns);
+                    const isLoaderRow = rowStartIndex >= blogs.length;
+                    const rowBlogs = blogs.slice(rowStartIndex, rowStartIndex + columns);
 
                     if (isLoaderRow) {
                         return (
@@ -193,9 +170,9 @@ export function VirtualBlogList<T extends BaseBlog>({
                 })}
             </div>
 
-            {filteredBlogs.length === 0 && (
+            {blogs.length === 0 && (
                 <div className="py-12 text-center text-muted-foreground border rounded-lg border-dashed">
-                    No articles found matching {`${searchQuery ? `"${searchQuery}"` : ''}`}
+                    No articles found matching your criteria.
                 </div>
             )}
         </div>

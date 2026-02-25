@@ -61,7 +61,7 @@ export function Navbar() {
                             Write Article
                         </Link>
                     }
-                    <ThemeToggle />
+                    {/* <ThemeToggle /> */}
                     {user ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>

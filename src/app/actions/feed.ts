@@ -27,7 +27,7 @@ export async function getPublicFeed(cursor?: string, limit = 9) {
             id: blog.id,
             title: blog.title,
             excerpt: plainText.length > 150 ? plainText.substring(0, 150) + '...' : plainText,
-            updatedAt: blog.updatedAt.toISOString(),
+            updatedAt: blog.updatedAt,
             author: {
                 id: blog.author.id,
                 name: blog.author.name
