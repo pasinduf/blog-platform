@@ -31,9 +31,9 @@ export async function saveDraftAction(
                 return { error: 'Unauthorized to edit this blog' };
             }
 
-            if (existingBlog.status !== 'DRAFT') {
-                return { error: 'Only drafts can be saved' };
-            }
+            // if (existingBlog.status !== 'DRAFT') {
+            //     return { error: 'Only drafts can be saved' };
+            // }
 
             const updatedBlog = await prisma.blog.update({
                 where: { id },
