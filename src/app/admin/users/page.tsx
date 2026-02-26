@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition, useEffect, useCallback } from 'react';
-import { getUsers, approvePost, rejectPost } from '@/app/actions/admin-users';
+import { getUsers, approvePost, rejectPost, promoteToAdmin, demoteToUser } from '@/app/actions/admin-users';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -93,6 +93,16 @@ export default function AdminUsersPage() {
         fetchUsers(currentPage, activeSearch);
     };
 
+    const handlePromote = async (userId: string) => {
+        await promoteToAdmin(userId);
+        fetchUsers(currentPage, activeSearch);
+    };
+
+    const handleDemote = async (userId: string) => {
+        await demoteToUser(userId);
+        fetchUsers(currentPage, activeSearch);
+    };
+
     if (isInitialLoad) {
         return (
             <div className="flex flex-col items-center justify-center p-16 w-full gap-4">
@@ -139,6 +149,7 @@ export default function AdminUsersPage() {
                                 <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                                     <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[200px]">Name</th>
                                     <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Email</th>
+                                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Role</th>
                                     <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Registered On</th>
                                     <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
                                     <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Actions</th>
@@ -149,13 +160,20 @@ export default function AdminUsersPage() {
                                     <tr key={u.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                                         <td className="p-4 align-middle font-medium">{u.firstName} {u.lastName}</td>
                                         <td className="p-4 align-middle">{u.email}</td>
+                                        <td className="p-4 align-middle">
+                                            {u.role === 'ADMIN' ? (
+                                                <Badge variant="default" className="bg-purple-600 hover:bg-purple-700">ADMIN</Badge>
+                                            ) : (
+                                                <Badge variant="outline">USER</Badge>
+                                            )}
+                                        </td>
                                         <td className="p-4 align-middle text-muted-foreground">
                                             {new Date(u.createdAt).toLocaleDateString()}
                                         </td>
                                         <td className="p-4 align-middle">
                                             <Badge
                                                 variant={
-                                                    u.status === 'APPROVED' ? 'success' :
+                                                    u.status === 'APPROVED' ? 'info' :
                                                         u.status === 'REJECTED' ? 'destructive' :
                                                             'secondary'
                                                 }
@@ -171,12 +189,20 @@ export default function AdminUsersPage() {
                                                     onReject={handleReject}
                                                 />
                                             )}
+                                            {u.status === 'APPROVED' && u.id !== user?.id && (
+                                                <UserActionButtons
+                                                    userId={u.id}
+                                                    onPromote={handlePromote}
+                                                    onDemote={handleDemote}
+                                                    role={u.role}
+                                                />
+                                            )}
                                         </td>
                                     </tr>
                                 ))}
                                 {users.length === 0 && (
                                     <tr>
-                                        <td colSpan={5} className="p-4 text-center text-muted-foreground">
+                                        <td colSpan={6} className="p-4 text-center text-muted-foreground">
                                             No users registered yet.
                                         </td>
                                     </tr>
