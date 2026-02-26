@@ -11,7 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, KeyRound, PenSquare, Bookmark } from 'lucide-react';
+import { LogOut, KeyRound, PenSquare, Bookmark, Menu } from 'lucide-react';
 import { logoutAction } from '@/app/actions/auth';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { UserCircle } from 'lucide-react';
@@ -51,17 +51,62 @@ export function Navbar() {
                         )}
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 md:gap-4">
                     {user &&
                         <Link
                             href="/writer/compose"
-                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium rounded-md hover:opacity-90 transition-opacity"
+                            className="hidden md:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium rounded-md hover:opacity-90 transition-opacity"
                         >
                             <PenSquare className="w-4 h-4" />
                             Write Article
                         </Link>
                     }
                     {/* <ThemeToggle /> */}
+
+                    {/* Mobile Navigation Dropdown */}
+                    {user && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="md:hidden relative size-8 rounded-full cursor-pointer">
+                                    <Menu className="size-6" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56" align="end" forceMount>
+                                <DropdownMenuLabel className="font-normal">
+                                    Menu
+                                </DropdownMenuLabel>
+                                <DropdownMenuItem asChild>
+                                    <Link href="/writer" className="w-full cursor-pointer">
+                                        Dashboard
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link href="/writer/compose" className="w-full cursor-pointer">
+                                        Write Article
+                                    </Link>
+                                </DropdownMenuItem>
+                                {role === 'ADMIN' && (
+                                    <>
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/admin" className="w-full cursor-pointer">
+                                                Review Queue
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/admin/leaderboard" className="w-full cursor-pointer">
+                                                Leaderboard
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/admin/users" className="w-full cursor-pointer">
+                                                Users
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    </>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
                     {user ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -108,7 +153,7 @@ export function Navbar() {
                         </Button>
                     )}
                 </div>
-            </div>
-        </nav>
+            </div >
+        </nav >
     );
 }
