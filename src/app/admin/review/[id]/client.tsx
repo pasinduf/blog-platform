@@ -20,7 +20,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
     const [aiSummary, setAiSummary] = useState<any>(blog.aiSummary || null);
     const [comment, setComment] = useState('');
     const [isPublishing, setIsPublishing] = useState(false);
-    const [isActioning, setIsActioning] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isOwnPost = Boolean(user && blog.author.id === user.id);
 
@@ -43,7 +43,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
     };
 
     const handleAddCommentResubmit = async () => {
-        setIsActioning(true);
+        setIsSubmitting(true);
         try {
             const result = await requestRevisionAction(blog.id, comment);
             if (result.error) {
@@ -56,7 +56,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
             console.error(error);
             toast.error('Failed to request revision.');
         } finally {
-            setIsActioning(false);
+            setIsSubmitting(false);
         }
     };
 
@@ -108,7 +108,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle>AI Summary</CardTitle>
-                            <Button size="icon" variant="ghost" onClick={handleGenerateSummary} disabled={isGenerating}>
+                            <Button size="icon" variant="ghost" onClick={handleGenerateSummary} disabled={isGenerating || isOwnPost}>
                                 {isGenerating ? <Spinner className="h-4 w-4" /> : <Wand2 className="h-4 w-4" />}
                             </Button>
                         </CardHeader>
@@ -158,14 +158,15 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                     value={comment}
                                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
                                     className="min-h-[100px]"
+                                    disabled={isOwnPost}
                                 />
                                 <Button
                                     className="w-full mt-2"
                                     variant="secondary"
                                     onClick={handleAddCommentResubmit}
-                                    disabled={!comment || isActioning || isOwnPost}
+                                    disabled={!comment || isSubmitting || isOwnPost}
                                 >
-                                    {isActioning && <Spinner className="mr-2 h-4 w-4" />}
+                                    {isSubmitting && <Spinner className="mr-2 h-4 w-4" />}
                                     Request Revision
                                 </Button>
                             </div>
