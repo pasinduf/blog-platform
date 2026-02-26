@@ -11,7 +11,7 @@ import { PaginationWrapper } from '@/components/ui/pagination-wrapper';
 import { Spinner } from '@/components/ui/spinner';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type User = {
@@ -135,8 +135,8 @@ export default function AdminUsersPage() {
                                 />
                             </div>
                             {searchTerm && (
-                                <Button type="button" variant="ghost" onClick={clearSearch}>
-                                    Clear
+                                <Button type="button" variant="secondary" onClick={clearSearch}>
+                                    <XIcon />
                                 </Button>
                             )}
                         </div>
@@ -203,7 +203,7 @@ export default function AdminUsersPage() {
                                 {users.length === 0 && (
                                     <tr>
                                         <td colSpan={6} className="p-4 text-center text-muted-foreground">
-                                            No users registered yet.
+                                            No users found.
                                         </td>
                                     </tr>
                                 )}
