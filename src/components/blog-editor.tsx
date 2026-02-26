@@ -182,7 +182,7 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                         <CardContent className="space-y-4">
                             {initialData.adminComments.map((comment: any) => (
                                 <div key={comment.id} className="p-3 bg-secondary rounded-md text-sm">
-                                    <span className="block font-medium mb-1">{comment.admin?.name || 'Admin'}</span>
+                                    <span className="block font-medium mb-1">{comment.admin ? `${comment.admin.firstName} ${comment.admin.lastName}` : 'Admin'}</span>
                                     <p className="text-muted-foreground">{comment.content}</p>
                                 </div>
                             ))}

@@ -64,7 +64,7 @@ export function CommentSection({ blogId, comments: initialComments }: { blogId: 
                 id: res.comment.id,
                 content: res.comment.content,
                 authorId: user.id,
-                authorName: user.name,
+                authorName: `${user.firstName} ${user.lastName}`,
                 createdAt: res.comment.createdAt.toString(),
                 replies: []
             };
@@ -92,7 +92,7 @@ export function CommentSection({ blogId, comments: initialComments }: { blogId: 
                         id: res.comment.id,
                         content: res.comment.content,
                         authorId: user.id,
-                        authorName: user.name,
+                        authorName: `${user.firstName} ${user.lastName}`,
                         createdAt: res.comment.createdAt.toString()
                     }
                 ]
@@ -293,7 +293,7 @@ export function CommentSection({ blogId, comments: initialComments }: { blogId: 
             {user ? (
                 <div className="flex gap-4 mb-8">
                     <Avatar className="w-10 h-10 border">
-                        <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                        <AvatarFallback>{user.firstName.charAt(0).toUpperCase()}{user.lastName.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-2">
                         <Textarea

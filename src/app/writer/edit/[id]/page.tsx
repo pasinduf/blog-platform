@@ -19,7 +19,7 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
             adminComments: {
                 include: {
                     admin: {
-                        select: { name: true }
+                        select: { firstName: true, lastName: true }
                     }
                 }
             }

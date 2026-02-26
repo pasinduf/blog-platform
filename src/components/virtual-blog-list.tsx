@@ -12,7 +12,7 @@ export interface BaseBlog {
     coverImage?: string | null;
     excerpt?: string;
     updatedAt: Date;
-    author?: { id?: string; name: string };
+    author?: { id?: string; firstName: string; lastName: string };
     commentCount?: number;
 }
 

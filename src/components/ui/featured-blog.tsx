@@ -12,7 +12,7 @@ interface FeaturedBlogProps {
     content: string;
     excerpt?: string;
     updatedAt: Date;
-    author?: { id?: string; name: string };
+    author?: { id?: string; firstName: string; lastName: string };
     commentCount?: number;
     coverImage?: string | null;
   };
@@ -54,7 +54,7 @@ export default function FeaturedBlog({ blog }: FeaturedBlogProps) {
               }
               <div className="flex items-center gap-1">
                 <User className="w-4 h-4" />
-                <span>{blog.author?.name}</span>
+                <span>{blog.author?.firstName} {blog.author?.lastName}</span>
               </div>
             </div>
 

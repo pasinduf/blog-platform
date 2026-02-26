@@ -7,7 +7,7 @@ export async function getPublicFeed(cursor?: string, limit = 9) {
     const dbBlogs = await prisma.blog.findMany({
         where: { status: 'PUBLISHED' },
         include: {
-            author: { select: { id: true, name: true } },
+            author: { select: { id: true, firstName: true, lastName: true } },
             _count: { select: { comments: true } },
         },
         orderBy: { createdAt: 'desc' },
@@ -33,7 +33,8 @@ export async function getPublicFeed(cursor?: string, limit = 9) {
             updatedAt: blog.updatedAt,
             author: {
                 id: blog.author.id,
-                name: blog.author.name
+                firstName: blog.author.firstName,
+                lastName: blog.author.lastName,
             },
             commentCount: blog._count.comments,
         };

@@ -14,7 +14,7 @@ export default async function AdminReviewPage({ params }: { params: Promise<{ id
         where: { id },
         include: {
             author: {
-                select: { id: true, name: true }
+                select: { id: true, firstName: true, lastName: true }
             }
         }
     });

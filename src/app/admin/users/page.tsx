@@ -17,7 +17,8 @@ import { Button } from '@/components/ui/button';
 type User = {
     id: string;
     email: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     role: string;
     status: string;
     createdAt: Date;
@@ -146,7 +147,7 @@ export default function AdminUsersPage() {
                             <tbody className="[&_tr:last-child]:border-0">
                                 {users.map((u) => (
                                     <tr key={u.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                                        <td className="p-4 align-middle font-medium">{u.name}</td>
+                                        <td className="p-4 align-middle font-medium">{u.firstName} {u.lastName}</td>
                                         <td className="p-4 align-middle">{u.email}</td>
                                         <td className="p-4 align-middle text-muted-foreground">
                                             {new Date(u.createdAt).toLocaleDateString()}

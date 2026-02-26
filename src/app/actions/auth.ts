@@ -36,7 +36,8 @@ export async function loginAction(prevState: any, formData: FormData) {
     await createSession({
         id: user.id,
         email: user.email,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         role: user.role,
     });
 
@@ -85,12 +86,12 @@ export async function registerAction(prevState: any, formData: FormData) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const fullName = `${trimmedFirstName} ${trimmedLastName}`;
 
     await prisma.user.create({
         data: {
             email: trimmedEmail,
-            name: fullName,
+            firstName: trimmedFirstName,
+            lastName: trimmedLastName,
             password: hashedPassword,
             role: 'USER',
             status: 'PENDING',

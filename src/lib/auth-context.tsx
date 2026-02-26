@@ -6,7 +6,8 @@ import { Role } from '@prisma/client';
 type SessionUser = {
     id: string;
     email: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     role: Role;
 };
 

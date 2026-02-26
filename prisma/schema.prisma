@@ -10,7 +10,8 @@ model User {
   id            String         @id @default(uuid())
   email         String         @unique
   password      String         // Hashed password
-  name          String
+  firstName     String
+  lastName      String
   role          Role           @default(USER) // WRITER, ADMIN, USER
   status        UserStatus     @default(PENDING)
   blogs         Blog[]         @relation("AuthoredBlogs")

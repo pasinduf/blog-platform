@@ -16,7 +16,12 @@ export async function getUsers(page = 1, limit = 10, searchName?: string) {
     const skip = (page - 1) * limit;
 
     const where = searchName
-        ? { name: { contains: searchName, mode: 'insensitive' as const } }
+        ? {
+            OR: [
+                { firstName: { contains: searchName, mode: 'insensitive' as const } },
+                { lastName: { contains: searchName, mode: 'insensitive' as const } },
+            ],
+        }
         : {};
 
     const [users, totalCount] = await Promise.all([
@@ -30,7 +35,8 @@ export async function getUsers(page = 1, limit = 10, searchName?: string) {
             select: {
                 id: true,
                 email: true,
-                name: true,
+                firstName: true,
+                lastName: true,
                 role: true,
                 status: true,
                 createdAt: true,
@@ -59,10 +65,10 @@ export async function approvePost(userId: string) {
         const user = await prisma.user.update({
             where: { id: userId },
             data: { status: 'APPROVED' },
-            select: { email: true, name: true }
+            select: { email: true, firstName: true, lastName: true }
         });
 
-        await sendWelcomeEmail(user.email, user.name);
+        await sendWelcomeEmail(user.email, `${user.firstName} ${user.lastName}`);
 
         revalidatePath('/admin/users');
         return { success: 'User approved successfully' };
@@ -113,7 +119,7 @@ export async function getPendingReviewBlogs(searchQuery: string = '') {
     const dbBlogs = await prisma.blog.findMany({
         where: whereClause,
         include: {
-            author: { select: { id: true, name: true } },
+            author: { select: { id: true, firstName: true, lastName: true } },
         },
         orderBy: { createdAt: 'desc' },
     });
@@ -126,7 +132,8 @@ export async function getPendingReviewBlogs(searchQuery: string = '') {
         updatedAt: blog.updatedAt,
         author: {
             id: blog.author.id,
-            name: blog.author.name,
+            firstName: blog.author.firstName,
+            lastName: blog.author.lastName,
         },
     }));
 

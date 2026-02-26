@@ -96,7 +96,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                             <CardTitle className="text-2xl">{blog.title}</CardTitle>
                             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-2">
                                 <div className="text-sm text-muted-foreground">
-                                    By {blog.author.name}
+                                    By {blog.author.firstName} {blog.author.lastName}
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <CalendarDays className="w-4 h-4" />

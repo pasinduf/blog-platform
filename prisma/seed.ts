@@ -20,7 +20,8 @@ async function main() {
         data: {
             email: 'admin@example.com',
             password: passwordHash,
-            name: 'Bob Admin',
+            firstName: 'Bob',
+            lastName: 'Admin',
             role: Role.ADMIN,
             status: 'APPROVED'
 
@@ -32,7 +33,8 @@ async function main() {
         data: {
             email: 'alice@example.com',
             password: passwordHash,
-            name: 'Alice User',
+            firstName: 'Alice',
+            lastName: 'User',
             role: Role.USER,
             status: 'APPROVED'
         },
@@ -43,7 +45,8 @@ async function main() {
         data: {
             email: 'charlie@example.com',
             password: passwordHash,
-            name: 'Charlie User',
+            firstName: 'Charlie',
+            lastName: 'User',
             role: Role.USER,
             status: 'APPROVED'
         },

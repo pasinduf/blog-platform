@@ -14,7 +14,7 @@ export default async function AdminDashboard() {
     const dbBlogs = await prisma.blog.findMany({
         where: { status: 'SUBMITTED' },
         include: {
-            author: { select: { id: true, name: true } },
+            author: { select: { id: true, firstName: true, lastName: true } },
         },
         orderBy: { createdAt: 'desc' },
     });
@@ -27,7 +27,8 @@ export default async function AdminDashboard() {
         updatedAt: blog.updatedAt,
         author: {
             id: blog.author.id,
-            name: blog.author.name,
+            firstName: blog.author.firstName,
+            lastName: blog.author.lastName,
         },
     }));
 

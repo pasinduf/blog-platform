@@ -16,7 +16,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     const blog = await prisma.blog.findUnique({
         where: { id },
         include: {
-            author: { select: { id: true, name: true } },
+            author: { select: { id: true, firstName: true, lastName: true } },
             comments: {
                 where: { parentId: null },
                 include: {
@@ -62,7 +62,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
             id: c.id,
             content: c.content,
             authorId: c.authorId,
-            authorName: c.author.name,
+            authorName: `${c.author.firstName} ${c.author.lastName}`,
             createdAt: c.createdAt.toISOString(),
             isEdited: c.isEdited,
             isDeleted: c.isDeleted,
@@ -74,7 +74,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                     id: r.id,
                     content: r.content,
                     authorId: r.authorId,
-                    authorName: r.author.name,
+                    authorName: `${r.author.firstName} ${r.author.lastName}`,
                     createdAt: r.createdAt.toISOString(),
                     isEdited: r.isEdited,
                     isDeleted: r.isDeleted,
@@ -127,10 +127,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                             <div className="flex flex-wrap items-center gap-6 text-gray-500 mb-8 pb-8 border-b border-gray-200">
                                 <div className="flex items-center gap-2">
                                     <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
-                                        {blog.author?.name.charAt(0).toUpperCase()}
+                                        {blog.author?.firstName.charAt(0).toUpperCase()}{blog.author?.lastName.charAt(0).toUpperCase()}
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-900">{blog.author?.name}</p>
+                                        <p className="font-medium text-gray-900">{blog.author?.firstName} {blog.author?.lastName}</p>
                                         <p className="text-sm">Author</p>
                                     </div>
                                 </div>
