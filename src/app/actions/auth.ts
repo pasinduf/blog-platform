@@ -157,11 +157,10 @@ export async function forgotPasswordAction(prevState: any, formData: FormData) {
     }
 
     const user = await prisma.user.findUnique({
-        where: { email },
+        where: { email, status: 'APPROVED' },
     });
 
     if (!user) {
-        // Return success even if user not found to prevent email enumeration
         return { success: 'If an account with that email exists, we sent a password reset link.' };
     }
 

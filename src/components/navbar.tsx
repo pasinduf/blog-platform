@@ -72,9 +72,6 @@ export function Navbar() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end" forceMount>
-                                <DropdownMenuLabel className="font-normal">
-                                    Menu
-                                </DropdownMenuLabel>
                                 <DropdownMenuItem asChild>
                                     <Link href="/writer" className="w-full cursor-pointer">
                                         Dashboard

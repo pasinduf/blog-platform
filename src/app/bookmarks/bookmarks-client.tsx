@@ -13,9 +13,8 @@ export function BookmarksClient({ initialBlogs }: BookmarksClientProps) {
     const [blogs, setBlogs] = React.useState<BaseBlog[]>(initialBlogs);
 
     return (
-
         <div className="flex flex-col gap-8">
-            <div className="grid gap-6 grid-cols-3">
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {blogs.map((blog) => (
                     <BlogCard
                         key={blog.id}
