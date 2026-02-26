@@ -129,7 +129,7 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
             <div className="space-y-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Post Status</CardTitle>
+                        <CardTitle>Article Status</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="flex items-center justify-between">

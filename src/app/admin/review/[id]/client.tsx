@@ -6,12 +6,13 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Wand2, CheckSquare, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Wand2, CheckSquare, AlertTriangle, CalendarDays } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { useAuth } from '@/lib/auth-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { generateAdminSummaryAction, requestRevisionAction, publishBlogAction } from '@/app/actions/blog';
 import { toast } from 'sonner';
+import { formatDate } from '@/lib/utils';
 
 export function AdminReviewClient({ blog }: { blog: any }) {
     const router = useRouter();
@@ -85,7 +86,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                 </Button>
-                <h1 className="text-3xl font-bold">Back</h1>
+                <h1 className="text-3xl font-bold">Review Draft</h1>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -93,7 +94,15 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-2xl">{blog.title}</CardTitle>
-                            <div className="text-sm text-muted-foreground">By {blog.author.name}</div>
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-2">
+                                <div className="text-sm text-muted-foreground">
+                                    By {blog.author.name}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <CalendarDays className="w-4 h-4" />
+                                    <span>{formatDate(blog.updatedAt)}</span>
+                                </div>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <div
@@ -106,7 +115,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
 
                 <div className="space-y-6">
                     <Card>
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>AI Summary</CardTitle>
                             <Button size="icon" variant="ghost" onClick={handleGenerateSummary} disabled={isGenerating || isOwnPost}>
                                 {isGenerating ? <Spinner className="h-4 w-4" /> : <Wand2 className="h-4 w-4" />}
@@ -118,7 +127,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                     Generate an AI summary to help review this post quickly.
                                 </div>
                             ) : (
-                                <div className="space-y-4 text-sm mt-2">
+                                <div className="space-y-4 text-sm">
                                     <div><span className="font-semibold block">Summary:</span> {aiSummary.summary}</div>
                                     <div>
                                         <span className="font-semibold block">Key Points:</span>

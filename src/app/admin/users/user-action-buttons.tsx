@@ -44,7 +44,7 @@ export function UserActionButtons({ userId, onApprove, onReject }: UserActionBut
                 confirmText="Approve"
                 onConfirm={handleApprove}
             >
-                <Button type="button" size="sm" variant="success" disabled={isPending}>
+                <Button type="button" size="sm" disabled={isPending}>
                     Approve
                 </Button>
             </ConfirmationDialog>
@@ -56,7 +56,7 @@ export function UserActionButtons({ userId, onApprove, onReject }: UserActionBut
                 destructive
                 onConfirm={handleReject}
             >
-                <Button type="button" size="sm" variant="destructive" disabled={isPending}>
+                <Button type="button" size="sm" variant="secondary" disabled={isPending}>
                     Decline
                 </Button>
             </ConfirmationDialog>

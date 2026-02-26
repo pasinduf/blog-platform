@@ -37,7 +37,7 @@ export default async function EditPage({ params }: { params: Promise<{ id: strin
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                 </Button>
-                <h1 className="text-3xl font-bold">Edit Post</h1>
+                <h1 className="text-3xl font-bold">Edit Article</h1>
             </div>
 
             <BlogEditorForm initialData={blog} />
