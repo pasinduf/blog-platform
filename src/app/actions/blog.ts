@@ -40,6 +40,7 @@ export async function saveDraftAction(
                 data: {
                     title,
                     content,
+                    status: 'DRAFT',
                 },
             });
 
@@ -93,9 +94,9 @@ export async function submitForReviewAction(
                 return { error: 'Unauthorized to edit this blog' };
             }
 
-            if (existingBlog.status !== 'DRAFT') {
-                return { error: 'Only drafts can be submitted for review' };
-            }
+            // if (existingBlog.status !== 'DRAFT') {
+            //     return { error: 'Only drafts can be submitted for review' };
+            // }
 
             await prisma.blog.update({
                 where: { id },
