@@ -1,8 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { VirtualBlogList, BaseBlog } from '@/components/virtual-blog-list';
 import { getPublicFeed } from '@/app/actions/feed';
 import SearchBar from '@/components/search-bar';
@@ -18,12 +16,53 @@ export function PublicFeedClient({ initialBlogs, initialNextCursor }: PublicFeed
     const [nextCursor, setNextCursor] = React.useState<string | undefined>(initialNextCursor);
     const [isLoadingNext, setIsLoadingNext] = React.useState(false);
     const [searchQuery, setSearchQuery] = React.useState('');
+    const [debouncedSearch, setDebouncedSearch] = React.useState('');
+    const [isSearching, setIsSearching] = React.useState(false);
+    const isFirstRender = React.useRef(true);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    React.useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        let isMounted = true;
+        const fetchSearch = async () => {
+            setIsSearching(true);
+            try {
+                const data = await getPublicFeed(undefined, 9, debouncedSearch);
+                if (isMounted) {
+                    setBlogs(data.blogs);
+                    setNextCursor(data.nextCursor);
+                }
+            } catch (error) {
+                console.error("Failed to search blogs", error);
+            } finally {
+                if (isMounted) {
+                    setIsSearching(false);
+                }
+            }
+        };
+
+        fetchSearch();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [debouncedSearch]);
 
     const fetchNextPage = React.useCallback(async () => {
         if (!nextCursor || isLoadingNext) return;
         setIsLoadingNext(true);
         try {
-            const data = await getPublicFeed(nextCursor, 9);
+            const data = await getPublicFeed(nextCursor, 9, debouncedSearch);
             setBlogs(prev => [...prev, ...data.blogs]);
             setNextCursor(data.nextCursor);
         } catch (error) {
@@ -31,20 +70,10 @@ export function PublicFeedClient({ initialBlogs, initialNextCursor }: PublicFeed
         } finally {
             setIsLoadingNext(false);
         }
-    }, [nextCursor, isLoadingNext]);
+    }, [nextCursor, isLoadingNext, debouncedSearch]);
 
-    const featuedBlog = blogs[0]
-
-    const filteredBlogs = React.useMemo(() => {
-        if (!searchQuery.trim()) return blogs;
-        const lowerQuery = searchQuery.toLowerCase();
-        return blogs.filter((blog) =>
-            blog.title.toLowerCase().includes(lowerQuery)
-        );
-    }, [blogs, searchQuery]);
-
-
-    const regularBlogs = searchQuery ? filteredBlogs : filteredBlogs.slice(1);
+    const featuredBlog = !debouncedSearch && blogs.length > 0 ? blogs[0] : null;
+    const regularBlogs = !debouncedSearch && blogs.length > 0 ? blogs.slice(1) : blogs;
 
     return (
         <>
@@ -61,13 +90,13 @@ export function PublicFeedClient({ initialBlogs, initialNextCursor }: PublicFeed
                 </div>
             </div>
 
-            {featuedBlog &&
+            {featuredBlog &&
                 <section className="mb-16">
                     <h2 className="text-3xl font-bold text-gray-800 mb-8 flex items-center gap-2">
                         <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">Featured Article</span>
                         <span className="h-1 flex-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-20"></span>
                     </h2>
-                    <FeaturedBlog blog={featuedBlog} />
+                    <FeaturedBlog blog={featuredBlog} />
                 </section>
             }
 

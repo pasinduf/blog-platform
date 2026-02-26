@@ -2,10 +2,16 @@
 
 import { prisma } from '@/lib/prisma';
 
-export async function getPublicFeed(cursor?: string, limit = 9) {
+export async function getPublicFeed(cursor?: string, limit = 9, searchQuery?: string) {
     const take = limit + 1;
+    const whereClause: any = { status: 'PUBLISHED' };
+
+    if (searchQuery) {
+        whereClause.title = { contains: searchQuery, mode: 'insensitive' };
+    }
+
     const dbBlogs = await prisma.blog.findMany({
-        where: { status: 'PUBLISHED' },
+        where: whereClause,
         include: {
             author: { select: { id: true, firstName: true, lastName: true } },
             _count: { select: { comments: true } },
