@@ -1,7 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Bookmark, CalendarDays, Clock, Eye, Share2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Clock, Eye, Share2 } from 'lucide-react';
 import { CommentSection } from '@/components/comment-section';
 import { getSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
@@ -205,9 +203,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
                     </div>
 
-                    <div className="mt-12">
-                        <CommentSection blogId={blog.id} comments={formattedComments} />
-                    </div>
+                    {blog.status === 'PUBLISHED' && (
+                        <div className="mt-12">
+                            <CommentSection blogId={blog.id} comments={formattedComments} />
+                        </div>
+                    )}
                 </div>
 
             </div>

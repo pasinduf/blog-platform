@@ -108,9 +108,15 @@ export default function BlogCard({ blog, renderAction, renderContent, compact = 
                     }
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                    <Link href={`/article/${blog.id}`}>{blog.title}</Link>
-                </h3>
+                {blog.status === 'PUBLISHED' ?
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        <Link href={`/article/${blog.id}`}>{blog.title}</Link>
+                    </h3> :
+
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        {blog.title}
+                    </h3>
+                }
 
 
                 {renderContent && (

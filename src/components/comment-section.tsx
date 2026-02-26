@@ -317,6 +317,7 @@ export function CommentSection({ blogId, comments: initialComments }: { blogId: 
                 </div>
             )}
 
+            { }
             <div className="space-y-4">
                 {comments.map((comment) => renderCommentCard(comment, false))}
                 {comments.length === 0 && (
