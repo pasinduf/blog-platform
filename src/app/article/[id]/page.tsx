@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Image from "next/image";
 import { calculateReadingTime, formatDate } from '@/lib/utils';
+import { BookmarkButton } from '@/components/bookmark-button';
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getSession();
@@ -28,7 +29,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                     }
                 },
                 orderBy: { createdAt: 'desc' }
-            }
+            },
+            ...(session ? { bookmarks: { where: { userId: session.id } } } : {})
         }
     });
 
@@ -86,6 +88,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     });
 
     const readingTime = calculateReadingTime(blog?.content);
+    // @ts-ignore
+    const isBookmarked = session ? blog.bookmarks.length > 0 : false;
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -113,9 +117,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                             <div className="flex items-center justify-between mb-6">
                                 <div></div>
                                 <div className="flex items-center gap-4">
-                                    <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
-                                        <Bookmark className="w-5 h-5" />
-                                    </button>
+                                    <BookmarkButton blogId={blog.id} initialIsBookmarked={isBookmarked} />
                                     <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-colors">
                                         <Share2 className="w-5 h-5" />
                                     </button>

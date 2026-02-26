@@ -18,6 +18,7 @@ model User {
   comments      Comment[]
   adminComments AdminComment[]
   reactions     Reaction[]
+  bookmarks     Bookmark[]
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
   passwordResetTokens  PasswordResetToken[]
@@ -63,6 +64,7 @@ model Blog {
   aiSummary     Json?          // Admin summary
   comments      Comment[]
   adminComments AdminComment[]
+  bookmarks     Bookmark[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -111,4 +113,15 @@ model AdminComment {
   blog      Blog     @relation(fields: [blogId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blogId    String
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, blogId])
 }

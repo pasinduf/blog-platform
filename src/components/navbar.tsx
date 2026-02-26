@@ -11,7 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, KeyRound, PenSquare } from 'lucide-react';
+import { LogOut, KeyRound, PenSquare, Bookmark } from 'lucide-react';
 import { logoutAction } from '@/app/actions/auth';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { UserCircle } from 'lucide-react';
@@ -78,7 +78,12 @@ export function Navbar() {
                                         </p>
                                     </div>
                                 </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link href="/bookmarks" className="w-full cursor-pointer flex items-center">
+                                        <Bookmark className="mr-2 h-4 w-4" />
+                                        <span>My Bookmarks</span>
+                                    </Link>
+                                </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
                                     <Link href="/change-password" className="w-full cursor-pointer flex items-center">
                                         <KeyRound className="mr-2 h-4 w-4" />

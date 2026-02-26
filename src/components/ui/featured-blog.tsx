@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { CalendarDays, User, ArrowRight } from "lucide-react";
 import { calculateReadingTime, formatDate } from "@/lib/utils";
+import { BookmarkButton } from "@/components/bookmark-button";
 
 interface FeaturedBlogProps {
   blog: {
@@ -15,6 +16,7 @@ interface FeaturedBlogProps {
     author?: { id?: string; firstName: string; lastName: string };
     commentCount?: number;
     coverImage?: string | null;
+    isBookmarked?: boolean;
   };
 }
 
@@ -45,16 +47,21 @@ export default function FeaturedBlog({ blog }: FeaturedBlogProps) {
 
         <div className="lg:w-1/2 p-8 md:p-12">
           <div className="mb-6">
-            <div className="flex items-center gap-4 text-sm text-blue-600 mb-3">
-              {blog.updatedAt &&
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-4 text-sm text-blue-600">
+                {blog.updatedAt &&
+                  <div className="flex items-center gap-1">
+                    <CalendarDays className="w-4 h-4" />
+                    <span>{formatDate(blog.updatedAt)}</span>
+                  </div>
+                }
                 <div className="flex items-center gap-1">
-                  <CalendarDays className="w-4 h-4" />
-                  <span>{formatDate(blog.updatedAt)}</span>
+                  <User className="w-4 h-4" />
+                  <span>{blog.author?.firstName} {blog.author?.lastName}</span>
                 </div>
-              }
-              <div className="flex items-center gap-1">
-                <User className="w-4 h-4" />
-                <span>{blog.author?.firstName} {blog.author?.lastName}</span>
+              </div>
+              <div className="bg-white/50 backdrop-blur-sm rounded-full mix-blend-multiply">
+                <BookmarkButton blogId={blog.id} initialIsBookmarked={!!blog.isBookmarked} />
               </div>
             </div>
 

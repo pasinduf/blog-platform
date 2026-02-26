@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { CalendarDays, User, Clock, ArrowRight, Bookmark, Share2 } from "lucide-react";
+import { CalendarDays, User, Clock, ArrowRight, Share2 } from "lucide-react";
 import { calculateReadingTime, formatDate } from "@/lib/utils";
 import { Badge } from "./ui/badge";
+import { BookmarkButton } from "./bookmark-button";
 
 interface BlogCardProps {
     blog: {
@@ -17,6 +18,7 @@ interface BlogCardProps {
         author?: { id?: string; firstName: string; lastName: string };
         commentCount?: number;
         coverImage?: string | null;
+        isBookmarked?: boolean;
     };
     renderAction?: (blog: any) => React.ReactNode;
     renderContent?: (blog: any) => React.ReactNode;
@@ -135,9 +137,7 @@ export default function BlogCard({ blog, renderAction, renderContent, compact = 
                             <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                         </Link>
                         <div className="flex items-center gap-2">
-                            <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
-                                <Bookmark className="w-5 h-5" />
-                            </button>
+                            <BookmarkButton blogId={blog.id} initialIsBookmarked={!!blog.isBookmarked} />
                             <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-colors">
                                 <Share2 className="w-5 h-5" />
                             </button>

@@ -1,8 +1,10 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/session';
 
 export async function getPublicFeed(cursor?: string, limit = 9, searchQuery?: string) {
+    const user = await getSession();
     const take = limit + 1;
     const whereClause: any = { status: 'PUBLISHED' };
 
@@ -15,6 +17,7 @@ export async function getPublicFeed(cursor?: string, limit = 9, searchQuery?: st
         include: {
             author: { select: { id: true, firstName: true, lastName: true } },
             _count: { select: { comments: true } },
+            ...(user ? { bookmarks: { where: { userId: user.id } } } : {})
         },
         orderBy: { createdAt: 'desc' },
         take,
@@ -43,6 +46,8 @@ export async function getPublicFeed(cursor?: string, limit = 9, searchQuery?: st
                 lastName: blog.author.lastName,
             },
             commentCount: blog._count.comments,
+            // @ts-ignore
+            isBookmarked: user ? blog.bookmarks.length > 0 : false,
         };
     });
 
