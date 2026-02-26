@@ -81,7 +81,7 @@ export default function ChangePasswordPage() {
                         </div>
                         <p className="font-medium text-lg">{state.success}</p>
                         <Button asChild className="w-full mt-4">
-                            <Link href="/">Return to Dashboard</Link>
+                            <Link href="/">Return to Home</Link>
                         </Button>
                     </CardContent>
                 ) : (

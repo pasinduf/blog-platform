@@ -90,182 +90,188 @@ export default function RegisterPage() {
                         Request access to the blog platform.
                     </CardDescription>
                 </CardHeader>
-                <form action={formAction}>
-                    <CardContent className="space-y-4 mb-6">
-                        {state?.error && (
-                            <Alert variant="destructive">
-                                <AlertCircle className="h-4 w-4" />
-                                <AlertDescription>{state.error}</AlertDescription>
-                            </Alert>
-                        )}
-                        {state?.success && (
-                            <Alert className="border-green-500 text-green-600">
-                                <CheckCircle2 className="h-4 w-4 stroke-green-600" />
-                                <AlertDescription>{state.success}</AlertDescription>
-                            </Alert>
-                        )}
-
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="name@example.com"
-                                required
-                                value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                    validateEmail(e.target.value);
-                                }}
-                            />
-                            {emailError && <p className="text-xs text-destructive">{emailError}</p>}
+                {state?.success ? (
+                    <CardContent className="space-y-6 pt-4 text-center">
+                        <div className="flex justify-center text-green-500 mb-4">
+                            <CheckCircle2 className="h-16 w-16" />
                         </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="firstName">First Name</Label>
-                                <Input
-                                    id="firstName"
-                                    name="firstName"
-                                    required
-                                    value={firstName}
-                                    onChange={(e) => {
-                                        setFirstName(e.target.value);
-                                        validateFirstName(e.target.value);
-                                    }}
-                                />
-                                {firstNameError && <p className="text-xs text-destructive">{firstNameError}</p>}
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="lastName">Last Name</Label>
-                                <Input
-                                    id="lastName"
-                                    name="lastName"
-                                    required
-                                    value={lastName}
-                                    onChange={(e) => {
-                                        setLastName(e.target.value);
-                                        validateLastName(e.target.value);
-                                    }}
-                                />
-                                {lastNameError && <p className="text-xs text-destructive">{lastNameError}</p>}
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="password">Password</Label>
-                                <Button
-                                    type="button"
-                                    variant="link"
-                                    className="p-0 h-auto text-xs"
-                                    onClick={generatePassword}
-                                >
-                                    Auto-generate
-                                </Button>
-                            </div>
-                            <div className="relative">
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    value={password}
-                                    onChange={(e) => {
-                                        setPassword(e.target.value);
-                                        validatePassword(e.target.value, confirmPassword);
-                                    }}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? (
-                                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                                    ) : (
-                                        <Eye className="h-4 w-4 text-muted-foreground" />
-                                    )}
-                                    <span className="sr-only">
-                                        {showPassword ? "Hide password" : "Show password"}
-                                    </span>
-                                </Button>
-                            </div>
-                            <p className="text-[10px] text-muted-foreground mt-1">
-                                Use a strong password (minimum 8 characters, including at least one letter and one number).
-                            </p>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">Confirm Password</Label>
-                            <div className="relative">
-                                <Input
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    required
-                                    value={confirmPassword}
-                                    onChange={(e) => {
-                                        setConfirmPassword(e.target.value);
-                                        validatePassword(password, e.target.value);
-                                    }}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
-                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                >
-                                    {showConfirmPassword ? (
-                                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                                    ) : (
-                                        <Eye className="h-4 w-4 text-muted-foreground" />
-                                    )}
-                                    <span className="sr-only">
-                                        {showConfirmPassword ? "Hide password" : "Show password"}
-                                    </span>
-                                </Button>
-                            </div>
-                        </div>
-
-                        {passwordError && (
-                            <p className="text-sm font-medium text-destructive">
-                                {passwordError}
-                            </p>
-                        )}
-
-                    </CardContent>
-                    <CardFooter className="flex-col gap-4">
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={
-                                isPending ||
-                                !!passwordError ||
-                                !!emailError ||
-                                !!firstNameError ||
-                                !!lastNameError ||
-                                !email.trim() ||
-                                !firstName.trim() ||
-                                !lastName.trim() ||
-                                !password ||
-                                !!state?.success
-                            }
-                        >
-                            {isPending ? 'Submitting...' : 'Register'}
+                        <p className="font-medium text-lg">{state.success}</p>
+                        <Button asChild className="w-full mt-4">
+                            <Link href="/">Return to Home</Link>
                         </Button>
-                        <div className="text-center text-sm">
-                            Already have an account?{' '}
-                            <Link href="/login" className="underline hover:text-primary">
-                                Login here
-                            </Link>
-                        </div>
-                    </CardFooter>
-                </form>
+                    </CardContent>
+                ) : (
+                    <form action={formAction}>
+                        <CardContent className="space-y-4 mb-6">
+                            {state?.error && (
+                                <Alert variant="destructive">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <AlertDescription>{state.error}</AlertDescription>
+                                </Alert>
+                            )}
+
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="name@example.com"
+                                    required
+                                    value={email}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value);
+                                        validateEmail(e.target.value);
+                                    }}
+                                />
+                                {emailError && <p className="text-xs text-destructive">{emailError}</p>}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="firstName">First Name</Label>
+                                    <Input
+                                        id="firstName"
+                                        name="firstName"
+                                        required
+                                        value={firstName}
+                                        onChange={(e) => {
+                                            setFirstName(e.target.value);
+                                            validateFirstName(e.target.value);
+                                        }}
+                                    />
+                                    {firstNameError && <p className="text-xs text-destructive">{firstNameError}</p>}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="lastName">Last Name</Label>
+                                    <Input
+                                        id="lastName"
+                                        name="lastName"
+                                        required
+                                        value={lastName}
+                                        onChange={(e) => {
+                                            setLastName(e.target.value);
+                                            validateLastName(e.target.value);
+                                        }}
+                                    />
+                                    {lastNameError && <p className="text-xs text-destructive">{lastNameError}</p>}
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="password">Password</Label>
+                                    <Button
+                                        type="button"
+                                        variant="link"
+                                        className="p-0 h-auto text-xs"
+                                        onClick={generatePassword}
+                                    >
+                                        Auto-generate
+                                    </Button>
+                                </div>
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        value={password}
+                                        onChange={(e) => {
+                                            setPassword(e.target.value);
+                                            validatePassword(e.target.value, confirmPassword);
+                                        }}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-muted-foreground" />
+                                        )}
+                                        <span className="sr-only">
+                                            {showPassword ? "Hide password" : "Show password"}
+                                        </span>
+                                    </Button>
+                                </div>
+                                <p className="text-[10px] text-muted-foreground mt-1">
+                                    Use a strong password (minimum 8 characters, including at least one letter and one number).
+                                </p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                                <div className="relative">
+                                    <Input
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        required
+                                        value={confirmPassword}
+                                        onChange={(e) => {
+                                            setConfirmPassword(e.target.value);
+                                            validatePassword(password, e.target.value);
+                                        }}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    >
+                                        {showConfirmPassword ? (
+                                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                                        ) : (
+                                            <Eye className="h-4 w-4 text-muted-foreground" />
+                                        )}
+                                        <span className="sr-only">
+                                            {showConfirmPassword ? "Hide password" : "Show password"}
+                                        </span>
+                                    </Button>
+                                </div>
+                            </div>
+
+                            {passwordError && (
+                                <p className="text-sm font-medium text-destructive">
+                                    {passwordError}
+                                </p>
+                            )}
+
+                        </CardContent>
+                        <CardFooter className="flex-col gap-4">
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={
+                                    isPending ||
+                                    !!passwordError ||
+                                    !!emailError ||
+                                    !!firstNameError ||
+                                    !!lastNameError ||
+                                    !email.trim() ||
+                                    !firstName.trim() ||
+                                    !lastName.trim() ||
+                                    !password ||
+                                    !!state?.success
+                                }
+                            >
+                                {isPending ? 'Submitting...' : 'Register'}
+                            </Button>
+                            <div className="text-center text-sm">
+                                Already have an account?{' '}
+                                <Link href="/login" className="underline hover:text-primary">
+                                    Login here
+                                </Link>
+                            </div>
+                        </CardFooter>
+                    </form>
+                )}
             </Card>
         </div>
     );

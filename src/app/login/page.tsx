@@ -39,7 +39,6 @@ export default function LoginPage() {
                                 type="email"
                                 placeholder="name@example.com"
                                 required
-                                defaultValue="admin@example.com"
                             />
                         </div>
                         <div className="space-y-2">
@@ -50,7 +49,6 @@ export default function LoginPage() {
                                     name="password"
                                     type={showPassword ? "text" : "password"}
                                     required
-                                    defaultValue="password123"
                                 />
                                 <Button
                                     type="button"

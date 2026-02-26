@@ -4,6 +4,7 @@ import { getSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { toast } from 'sonner';
+import { sendWelcomeEmail } from '@/lib/email';
 
 export async function getUsers(page = 1, limit = 10, searchName?: string) {
     const session = await getSession();
@@ -55,10 +56,13 @@ export async function approvePost(userId: string) {
     }
 
     try {
-        await prisma.user.update({
+        const user = await prisma.user.update({
             where: { id: userId },
             data: { status: 'APPROVED' },
+            select: { email: true, name: true }
         });
+
+        await sendWelcomeEmail(user.email, user.name);
 
         revalidatePath('/admin/users');
         return { success: 'User approved successfully' };
