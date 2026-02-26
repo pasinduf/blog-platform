@@ -54,7 +54,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
 
     try {
 
-        const resetLink = `${process.env.PUBLIC_SITE_URL}/reset-password?token=${token}`;
+        const resetLink = `${siteUrl}/reset-password?token=${token}`;
 
         const { data, error } = await resend.emails.send({
             from: 'onboarding@resend.dev',
