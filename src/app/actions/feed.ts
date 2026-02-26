@@ -48,6 +48,7 @@ export async function getPublicFeed(cursor?: string, limit = 9, searchQuery?: st
             commentCount: blog._count.comments,
             // @ts-ignore
             isBookmarked: user ? blog.bookmarks.length > 0 : false,
+            views: blog.views,
         };
     });
 

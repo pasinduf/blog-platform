@@ -17,6 +17,7 @@ interface FeaturedBlogProps {
     commentCount?: number;
     coverImage?: string | null;
     isBookmarked?: boolean;
+    views?: number;
   };
 }
 
@@ -93,7 +94,7 @@ export default function FeaturedBlog({ blog }: FeaturedBlogProps) {
               <div className="text-sm text-gray-500">Comments</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-800">1.2K</div>
+              <div className="text-2xl font-bold text-gray-800">{blog.views || 0}</div>
               <div className="text-sm text-gray-500">Views</div>
             </div>
           </div>

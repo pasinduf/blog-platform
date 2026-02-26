@@ -62,6 +62,7 @@ model Blog {
   author        User           @relation("AuthoredBlogs", fields: [authorId], references: [id])
   aiAnalysis    Json?          // Structured insights
   aiSummary     Json?          // Admin summary
+  views         Int            @default(0)
   comments      Comment[]
   adminComments AdminComment[]
   bookmarks     Bookmark[]

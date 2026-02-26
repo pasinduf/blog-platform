@@ -84,6 +84,7 @@ export async function getBookmarksAction() {
                 lastName: blog.author.lastName,
             },
             commentCount: blog._count.comments,
+            views: blog.views,
         };
     });
 

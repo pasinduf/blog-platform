@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import Image from "next/image";
 import { calculateReadingTime, formatDate } from '@/lib/utils';
 import { BookmarkButton } from '@/components/bookmark-button';
+import { ViewTracker } from '@/components/view-tracker';
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getSession();
@@ -86,11 +87,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     });
 
     const readingTime = calculateReadingTime(blog?.content);
-    // @ts-ignore
     const isBookmarked = session ? blog.bookmarks.length > 0 : false;
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+            <ViewTracker blogId={blog.id} />
             <div className="mb-6">
                 <div className="border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-40">
                     <div className="max-w-4xl mx-auto px-4 py-4">
@@ -146,7 +147,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Eye className="w-4 h-4" />
-                                        <span>1.2K views</span>
+                                        <span>{blog.views} views</span>
                                     </div>
                                 </div>
                             </div>

@@ -15,6 +15,7 @@ export interface BaseBlog {
     author?: { id?: string; firstName: string; lastName: string };
     commentCount?: number;
     isBookmarked?: boolean;
+    views?: number;
 }
 
 interface VirtualBlogListProps<T extends BaseBlog> {
