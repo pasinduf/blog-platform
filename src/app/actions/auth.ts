@@ -3,9 +3,10 @@
 import { createSession, deleteSession, getSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { passwordRegex } from '@/lib/utils';
+import crypto from 'crypto';
+import { sendPasswordResetEmail } from '@/lib/email';
 
 export async function loginAction(prevState: any, formData: FormData) {
     const email = formData.get('email') as string;
@@ -146,4 +147,82 @@ export async function changePasswordAction(prevState: any, formData: FormData) {
     });
 
     return { success: 'Password changed successfully' };
+}
+
+export async function forgotPasswordAction(prevState: any, formData: FormData) {
+    const email = formData.get('email') as string;
+
+    if (!email) {
+        return { error: 'Email is required' };
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+
+    if (!user) {
+        // Return success even if user not found to prevent email enumeration
+        return { success: 'If an account with that email exists, we sent a password reset link.' };
+    }
+
+    const token = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await prisma.passwordResetToken.create({
+        data: {
+            token,
+            userId: user.id,
+            expiresAt,
+        },
+    });
+
+    const { error } = await sendPasswordResetEmail(user.email, token);
+
+    if (error) {
+        return { error: 'Failed to send reset email. Please try again later. Check server console for link if in development.' };
+    }
+
+    return { success: 'If an account with that email exists, we sent a password reset link.' };
+}
+
+export async function resetPasswordAction(prevState: any, formData: FormData) {
+
+    const token = formData.get('token') as string;
+    const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+
+    if (!token || !password || !confirmPassword) {
+        return { error: 'All fields are required' };
+    }
+
+    if (password !== confirmPassword) {
+        return { error: 'Passwords do not match' };
+    }
+
+    if (!passwordRegex.test(password)) {
+        return { error: 'Password must be at least 8 characters long and contain at least one letter and one number' };
+    }
+
+    const resetToken = await prisma.passwordResetToken.findUnique({
+        where: { token },
+        include: { user: true },
+    });
+
+    if (!resetToken || resetToken.expiresAt < new Date()) {
+        return { error: 'Invalid or expired password reset token' };
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.$transaction([
+        prisma.user.update({
+            where: { id: resetToken.userId },
+            data: { password: hashedPassword },
+        }),
+        prisma.passwordResetToken.deleteMany({
+            where: { userId: resetToken.userId }, // delete all tokens for this user
+        }),
+    ]);
+
+    return { success: 'Password has been reset successfully. You can now log in with your new password.' };
 }
