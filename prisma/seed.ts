@@ -15,23 +15,9 @@ async function main() {
     // Hash passwords
     const passwordHash = await bcrypt.hash('password123', 10);
 
-    // Users
-    const writer = await prisma.user.upsert({
-        where: { email: 'writer@example.com' },
-        update: {},
-        create: {
-            email: 'writer@example.com',
-            password: passwordHash,
-            name: 'Alice Writer',
-            role: Role.USER,
-            status: 'APPROVED'
-        },
-    });
-
-    const admin = await prisma.user.upsert({
-        where: { email: 'admin@example.com' },
-        update: {},
-        create: {
+    // Admin
+    const admin = await prisma.user.create({
+        data: {
             email: 'admin@example.com',
             password: passwordHash,
             name: 'Bob Admin',
@@ -41,11 +27,21 @@ async function main() {
         },
     });
 
-    const user = await prisma.user.upsert({
-        where: { email: 'user@example.com' },
-        update: {},
-        create: {
-            email: 'user@example.com',
+    // Users
+    const user1 = await prisma.user.create({
+        data: {
+            email: 'alice@example.com',
+            password: passwordHash,
+            name: 'Alice User',
+            role: Role.USER,
+            status: 'APPROVED'
+        },
+    })
+
+
+    const user2 = await prisma.user.create({
+        data: {
+            email: 'charlie@example.com',
             password: passwordHash,
             name: 'Charlie User',
             role: Role.USER,
@@ -65,10 +61,10 @@ async function main() {
                 title: `Sample Post #${i}: Exploring Tech in 2026`,
                 content: `This is the detailed content for sample post #${i}. It discusses various advancements in web development, AI integration, and the general software engineering landscape. Virtual scrolling, database fetching, and frontend caching are core tenets. As we scale, keeping DOM nodes minimal is essential for 60fps performance on low-end devices. \n\nThanks for reading!`,
                 status: 'PUBLISHED',
-                authorId: i % 2 === 0 ? writer.id : admin.id,
+                authorId: i % 3 === 0 ? user1.id : i % 3 === 1 ? user2.id : admin.id,
                 comments: {
                     create: i % 3 === 0 ? [
-                        { content: 'Great article!', authorId: user.id },
+                        { content: 'Great article!', authorId: user1.id },
                         { content: 'Very informative, thanks for sharing.', authorId: admin.id }
                     ] : []
                 }
