@@ -208,7 +208,7 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                 {aiAnalysis && (
                     <Card>
                         <CardHeader>
-                            <CardTitle>AI Feedback</CardTitle>
+                            <CardTitle className="text-destructive">AI Feedback</CardTitle>
                             <CardDescription>Generated during submission</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -239,9 +239,9 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                 )}
 
                 {initialData?.adminComments && initialData.adminComments.length > 0 && (
-                    <Card className="border-destructive">
+                    <Card>
                         <CardHeader>
-                            <CardTitle className="text-destructive">Admin Comments</CardTitle>
+                            <CardTitle>Admin Comments</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {initialData.adminComments.map((comment: any) => (

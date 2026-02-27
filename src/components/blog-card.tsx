@@ -6,6 +6,7 @@ import { CalendarDays, User, Clock, ArrowRight, Share2 } from "lucide-react";
 import { calculateReadingTime, formatDate } from "@/lib/utils";
 import { Badge } from "./ui/badge";
 import { BookmarkButton } from "./bookmark-button";
+import { ShareButton } from "./share-button";
 
 interface BlogCardProps {
     blog: {
@@ -144,9 +145,7 @@ export default function BlogCard({ blog, renderAction, renderContent, compact = 
                         </Link>
                         <div className="flex items-center gap-2">
                             <BookmarkButton blogId={blog.id} initialIsBookmarked={!!blog.isBookmarked} />
-                            <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-colors">
-                                <Share2 className="w-5 h-5" />
-                            </button>
+                            <ShareButton blogId={blog.id} />
                         </div>
                     </div>
                 }

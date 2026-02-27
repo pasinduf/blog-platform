@@ -9,6 +9,7 @@ import { calculateReadingTime, formatDate } from '@/lib/utils';
 import { BookmarkButton } from '@/components/bookmark-button';
 import { ViewTracker } from '@/components/view-tracker';
 import AuthorBio from '@/components/author-bio';
+import { ShareButton } from '@/components/share-button';
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getSession();
@@ -118,9 +119,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                                 <div></div>
                                 <div className="flex items-center gap-4">
                                     <BookmarkButton blogId={blog.id} initialIsBookmarked={isBookmarked} />
-                                    <button className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-colors">
-                                        <Share2 className="w-5 h-5" />
-                                    </button>
+                                    <ShareButton blogId={blog.id} />
                                 </div>
                             </div>
 
