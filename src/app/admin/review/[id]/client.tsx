@@ -18,7 +18,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
     const router = useRouter();
     const { user } = useAuth();
     const [isGenerating, setIsGenerating] = useState(false);
-    const [aiSummary, setAiSummary] = useState<any>(blog.aiSummary || null);
+    const [aiSummary, setAiSummary] = useState<any>(blog.adminAiSummary || null);
     const [comment, setComment] = useState('');
     const [isPublishing, setIsPublishing] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -117,7 +117,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>AI Summary</CardTitle>
-                            <Button size="icon" variant="ghost" onClick={handleGenerateSummary} disabled={isGenerating || isOwnPost}>
+                            <Button size="icon" onClick={handleGenerateSummary} disabled={isGenerating || isOwnPost || blog.status !== 'SUBMITTED'}>
                                 {isGenerating ? <Spinner className="h-4 w-4" /> : <Wand2 className="h-4 w-4" />}
                             </Button>
                         </CardHeader>

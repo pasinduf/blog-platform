@@ -62,8 +62,10 @@ model Blog {
   status        BlogStatus     @default(DRAFT)
   authorId      String
   author        User           @relation("AuthoredBlogs", fields: [authorId], references: [id])
-  aiAnalysis    Json?          // Structured insights
-  aiSummary     Json?          // Admin summary
+  userAiAnalysis Json?          // Writer AI evaluation
+  adminAiSummary Json?          // Admin reviewer summary
+  clarityScore   Int?           // Post-approval AI scoring (1-100)
+  aiUserAttempts Int            @default(0) // Limits user AI runs
   views         Int            @default(0)
   comments      Comment[]
   adminComments AdminComment[]

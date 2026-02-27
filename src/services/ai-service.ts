@@ -45,4 +45,18 @@ export class AIService {
             risks: ['Might be too vague for advanced readers', 'Some statements are subjective'],
         };
     }
+
+    /**
+     * Generates a clarity score when an admin approves an article.
+     * Score between 1 and 100.
+     */
+    static async generateClarityScore(title: string, content: string): Promise<number> {
+        console.log(`[AI SERVICE] Generating clarity score for: "${title}"`);
+
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Random score 60-100
+        return Math.floor(Math.random() * (100 - 60 + 1)) + 60;
+    }
 }

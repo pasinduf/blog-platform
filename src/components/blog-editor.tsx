@@ -9,9 +9,9 @@ import { Button } from '@/components/ui/button';
 import { RichTextEditor } from '@/components/rich-text-editor';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Save, Send, UploadCloud, X } from 'lucide-react';
+import { Save, Send, UploadCloud, X, Wand2 } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
-import { saveDraftAction, submitForReviewAction } from '@/app/actions/blog';
+import { saveDraftAction, submitForReviewAction, userPerformAiAnalysisAction } from '@/app/actions/blog';
 import Image from 'next/image';
 import { toast } from 'sonner';
 
@@ -22,10 +22,12 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
     const [title, setTitle] = useState(initialData?.title || '');
     const [content, setContent] = useState(initialData?.content || '');
     const [status, setStatus] = useState(initialData?.status || 'DRAFT');
-    const [aiAnalysis, setAiAnalysis] = useState<any>(initialData?.aiAnalysis || null);
+    const [aiAnalysis, setAiAnalysis] = useState<any>(initialData?.userAiAnalysis || null);
+    const [aiAttempts, setAiAttempts] = useState<number>(initialData?.aiUserAttempts || 0);
     const [coverImage, setCoverImage] = useState<string | null>(initialData?.coverImage || null);
     const [previewError, setPreviewError] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const [isEvaluating, setIsEvaluating] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const [draftId, setDraftId] = useState<string | null>(initialData?.id || null);
@@ -104,9 +106,6 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                     window.history.replaceState(null, '', `/writer/edit/${result.blogId}`);
                 }
 
-                if (result.aiAnalysis) {
-                    setAiAnalysis(result.aiAnalysis);
-                }
                 setStatus('SUBMITTED');
             }
         } catch (error) {
@@ -114,6 +113,30 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
             toast.error('An unexpected error occurred during submission.');
         } finally {
             setIsAnalyzing(false);
+        }
+    };
+
+    const handleRunAiEvaluation = async () => {
+        if (!draftId) {
+            toast.error("Please save your draft first before running AI evaluation.");
+            return;
+        }
+
+        setIsEvaluating(true);
+        try {
+            const result = await userPerformAiAnalysisAction(draftId);
+            if (result.error) {
+                toast.error(result.error);
+            } else if (result.success && result.aiAnalysis) {
+                setAiAnalysis(result.aiAnalysis);
+                setAiAttempts(result.attempts || aiAttempts + 1);
+                toast.success('AI Evaluation completed successfully.');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to run AI evaluation");
+        } finally {
+            setIsEvaluating(false);
         }
     };
 
@@ -205,11 +228,38 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                     </CardContent>
                 </Card>
 
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex justify-between items-center text-lg">
+                            AI Writing Coach
+                            <Badge variant={aiAttempts >= 3 ? "destructive" : "secondary"}>{aiAttempts}/3 Attempts</Badge>
+                        </CardTitle>
+                        <CardDescription>Get feedback before submitting</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Button
+                            className="w-full"
+                            onClick={handleRunAiEvaluation}
+                            disabled={isEvaluating || aiAttempts >= 3 || status !== 'DRAFT'}
+                            variant="secondary"
+                        >
+                            {isEvaluating ? <Spinner className="mr-2 h-4 w-4" /> : <Wand2 className="mr-2 h-4 w-4" />}
+                            Run AI Evaluation
+                        </Button>
+                        {aiAttempts >= 3 && (
+                            <p className="text-xs text-destructive mt-3 text-center">Maximum attempts reached.</p>
+                        )}
+                        {!draftId && status === 'DRAFT' && (
+                            <p className="text-xs text-muted-foreground mt-3 text-center">Save draft to enable evaluation.</p>
+                        )}
+                    </CardContent>
+                </Card>
+
                 {aiAnalysis && (
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-destructive">AI Feedback</CardTitle>
-                            <CardDescription>Generated during submission</CardDescription>
+                            <CardTitle className="text-primary text-xl">AI Feedback</CardTitle>
+                            <CardDescription>Review and improve your article</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>

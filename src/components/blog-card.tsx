@@ -104,7 +104,7 @@ export default function BlogCard({ blog, renderAction, renderContent, compact = 
                     }
                     {showStatus &&
                         <div className="ml-auto flex items-center">
-                            <Badge variant={blog.status === 'PUBLISHED' ? 'default' : blog.status === 'ghost' ? 'destructive' : 'secondary'}>{blog.status}</Badge>
+                            <Badge variant={blog.status === 'PUBLISHED' ? 'default' : blog.status === 'DRAFT' ? 'warning' : 'secondary'}>{blog.status}</Badge>
                         </div>
                     }
                 </div>

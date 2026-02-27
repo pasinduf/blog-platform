@@ -128,21 +128,17 @@ export async function submitForReviewAction(
             return { error: 'Failed to initialize blog for submission.' };
         }
 
-        // Perform AI Analysis
-        const analysis = await AIService.performWriterAnalysis(title, content);
-
         // Update blog strictly typing aiAnalysis since it's Prisma Json field but we can pass object
         await prisma.blog.update({
             where: { id: blogId },
             data: {
                 status: 'SUBMITTED',
-                aiAnalysis: analysis as any,
             },
         });
 
         revalidatePath('/writer');
         revalidatePath('/admin');
-        return { success: true, blogId, aiAnalysis: analysis };
+        return { success: true, blogId };
     } catch (error) {
         console.error('Failed to submit for review:', error);
         return { error: 'Failed to submit for review' };
@@ -159,11 +155,15 @@ export async function generateAdminSummaryAction(blogId: string) {
         const blog = await prisma.blog.findUnique({ where: { id: blogId } });
         if (!blog) return { error: 'Blog not found' };
 
+        if (blog.status !== 'SUBMITTED') {
+            return { error: 'Only submitted blogs can be reviewed' };
+        }
+
         const summary = await AIService.generateAdminSummary(blog.title, blog.content);
 
         await prisma.blog.update({
             where: { id: blogId },
-            data: { aiSummary: summary as any },
+            data: { adminAiSummary: summary as any },
         });
 
         revalidatePath(`/admin/review/${blogId}`);
@@ -228,9 +228,14 @@ export async function publishBlogAction(blogId: string) {
             return { error: 'Cannot publish your own post' };
         }
 
+        const clarityScore = await AIService.generateClarityScore(blog.title, blog.content);
+
         await prisma.blog.update({
             where: { id: blogId },
-            data: { status: 'PUBLISHED' },
+            data: {
+                status: 'PUBLISHED',
+                clarityScore
+            },
         });
 
         revalidatePath('/admin');
@@ -239,5 +244,49 @@ export async function publishBlogAction(blogId: string) {
     } catch (error) {
         console.error('Failed to publish blog:', error);
         return { error: 'Failed to publish blog' };
+    }
+}
+
+export async function userPerformAiAnalysisAction(blogId: string) {
+    const user = await getSession();
+
+    if (!user) {
+        return { error: 'Unauthorized' };
+    }
+
+    try {
+        const blog = await prisma.blog.findUnique({
+            where: { id: blogId },
+        });
+
+        if (!blog) {
+            return { error: 'Blog not found' };
+        }
+
+        if (blog.authorId !== user.id) {
+            return { error: 'Unauthorized' };
+        }
+
+        if (blog.aiUserAttempts >= 3) {
+            return { error: 'Maximum AI evaluation attempts reached.' };
+        }
+
+        const analysis = await AIService.performWriterAnalysis(blog.title, blog.content);
+
+        await prisma.blog.update({
+            where: { id: blogId },
+            data: {
+                userAiAnalysis: analysis as any,
+                aiUserAttempts: {
+                    increment: 1
+                }
+            },
+        });
+
+        revalidatePath('/writer/compose');
+        return { success: true, aiAnalysis: analysis, attempts: blog.aiUserAttempts + 1 };
+    } catch (error) {
+        console.error('Failed to perform AI analysis:', error);
+        return { error: 'Failed to perform AI analysis' };
     }
 }
