@@ -15,6 +15,7 @@ import { getSession } from "@/lib/session";
 import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import { prisma } from "@/lib/prisma";
 
 export default async function RootLayout({
   children,
@@ -23,6 +24,23 @@ export default async function RootLayout({
 }>) {
 
   const session = await getSession();
+
+  let sessionWithProfile = session;
+  if (session) {
+    const dbUser = await prisma.user.findUnique({
+      where: { id: session.id },
+      select: { profileImage: true, firstName: true, lastName: true }
+    });
+
+    if (dbUser) {
+      sessionWithProfile = {
+        ...session,
+        profileImage: dbUser.profileImage,
+        firstName: dbUser.firstName,
+        lastName: dbUser.lastName
+      };
+    }
+  }
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -35,7 +53,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider session={session}>
+          <AuthProvider session={sessionWithProfile}>
             <div className="flex flex-col min-h-screen">
               <Navbar />
               <main className="flex-1">{children}</main>

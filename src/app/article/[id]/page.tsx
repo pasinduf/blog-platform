@@ -8,6 +8,7 @@ import Image from "next/image";
 import { calculateReadingTime, formatDate } from '@/lib/utils';
 import { BookmarkButton } from '@/components/bookmark-button';
 import { ViewTracker } from '@/components/view-tracker';
+import AuthorBio from '@/components/author-bio';
 
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getSession();
@@ -16,7 +17,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     const blog = await prisma.blog.findUnique({
         where: { id },
         include: {
-            author: { select: { id: true, firstName: true, lastName: true } },
+            author: { select: { id: true, firstName: true, lastName: true, bioDescription: true, profileImage: true } },
             comments: {
                 where: { parentId: null },
                 include: {
@@ -127,9 +128,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
 
                             <div className="flex flex-wrap items-center gap-6 text-gray-500 mb-8 pb-8 border-b border-gray-200">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
-                                        {blog.author?.firstName.charAt(0).toUpperCase()}{blog.author?.lastName.charAt(0).toUpperCase()}
-                                    </div>
+
+                                    {blog.author?.profileImage ?
+                                        <div className="relative h-10 w-10 rounded-full overflow-hidden border hover:bg-transparent p-0">
+                                            <Image src={blog.author.profileImage} alt="Profile" fill className="object-cover" /> :
+                                        </div> :
+                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                                            {blog.author?.firstName.charAt(0).toUpperCase()}{blog.author?.lastName.charAt(0).toUpperCase()}
+                                        </div>
+                                    }
+
                                     <div>
                                         <p className="font-medium text-gray-900">{blog.author?.firstName} {blog.author?.lastName}</p>
                                         <p className="text-sm">Author</p>
@@ -182,19 +190,25 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
                                 dangerouslySetInnerHTML={{ __html: blog.content }}
                             />
 
-                            <div className="mt-12 pt-8 border-t border-gray-200">
+                            {/* <div className="mt-12 pt-8 border-t border-gray-200">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Tags</h3>
                                 <div className="flex flex-wrap gap-2">
                                     <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">Tutorial</span>
                                     <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">Web Development</span>
                                     <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm">Next.js</span>
                                 </div>
-                            </div>
-
-
-                            {/* <div className="mt-12">
-                                <AuthorBio author={post.author} />
                             </div> */}
+
+                            {blog.author?.bioDescription && (
+                                <div className="mt-8">
+                                    <AuthorBio
+                                        firstName={blog.author.firstName}
+                                        lastName={blog.author.lastName}
+                                        bioDescription={blog.author.bioDescription}
+                                        profileImage={blog.author?.profileImage}
+                                    />
+                                </div>
+                            )}
 
                         </article>
                     </div>

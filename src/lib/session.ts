@@ -13,6 +13,7 @@ export type SessionPayload = {
     lastName: string;
     role: Role;
     expiresAt: Date;
+    profileImage?: string | null;
 };
 
 export async function encrypt(payload: SessionPayload) {

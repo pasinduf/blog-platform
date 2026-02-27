@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,10 +12,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, KeyRound, PenSquare, Bookmark, Menu } from 'lucide-react';
+import { LogOut, PenSquare, Bookmark, Menu, UserCircle, UserIcon } from 'lucide-react';
 import { logoutAction } from '@/app/actions/auth';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { UserCircle } from 'lucide-react';
 
 export function Navbar() {
     const { user, role } = useAuth();
@@ -107,8 +107,14 @@ export function Navbar() {
                     {user ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="relative size-8 rounded-full cursor-pointer">
-                                    <UserCircle className="size-6" />
+                                <Button variant="ghost" className="relative h-8 w-8 rounded-full overflow-hidden border hover:bg-transparent p-0">
+                                    {user.profileImage ? (
+                                        <div className="w-full h-full relative">
+                                            <Image src={user.profileImage} alt="Profile" fill className="object-cover" />
+                                        </div>
+                                    ) : (
+                                        <UserCircle className="size-6 text-muted-foreground" />
+                                    )}
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -127,9 +133,9 @@ export function Navbar() {
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href="/change-password" className="w-full cursor-pointer flex items-center">
-                                        <KeyRound className="mr-2 h-4 w-4" />
-                                        <span>Change Password</span>
+                                    <Link href="/profile" className="w-full cursor-pointer flex items-center">
+                                        <UserIcon className="mr-2 h-4 w-4" />
+                                        <span>Profile Settings</span>
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />

@@ -12,6 +12,8 @@ model User {
   password      String         // Hashed password
   firstName     String
   lastName      String
+  bioDescription String?
+  profileImage  String?      @db.Text
   role          Role           @default(USER) // WRITER, ADMIN, USER
   status        UserStatus     @default(PENDING)
   blogs         Blog[]         @relation("AuthoredBlogs")

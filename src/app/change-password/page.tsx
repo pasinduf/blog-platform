@@ -209,7 +209,7 @@ export default function ChangePasswordPage() {
                         </CardContent>
                         <CardFooter className="flex justify-between mt-4">
                             <Button variant="outline" type="button" asChild>
-                                <Link href="/">Cancel</Link>
+                                <Link href="/profile">Cancel</Link>
                             </Button>
                             <Button
                                 type="submit"

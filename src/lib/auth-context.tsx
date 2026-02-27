@@ -9,6 +9,7 @@ type SessionUser = {
     firstName: string;
     lastName: string;
     role: Role;
+    profileImage?: string | null;
 };
 
 interface AuthContextType {
