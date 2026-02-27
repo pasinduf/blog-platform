@@ -241,7 +241,6 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                             className="w-full"
                             onClick={handleRunAiEvaluation}
                             disabled={isEvaluating || aiAttempts >= 3 || status !== 'DRAFT'}
-                            variant="secondary"
                         >
                             {isEvaluating ? <Spinner className="mr-2 h-4 w-4" /> : <Wand2 className="mr-2 h-4 w-4" />}
                             Run AI Evaluation

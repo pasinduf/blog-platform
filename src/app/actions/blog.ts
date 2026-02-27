@@ -159,7 +159,7 @@ export async function generateAdminSummaryAction(blogId: string) {
             return { error: 'Only submitted blogs can be reviewed' };
         }
 
-        const summary = await AIService.generateAdminSummary(blog.title, blog.content);
+        const summary = await AIService.generateAdminSummary(blog.id, blog.title, blog.content);
 
         await prisma.blog.update({
             where: { id: blogId },
@@ -228,7 +228,7 @@ export async function publishBlogAction(blogId: string) {
             return { error: 'Cannot publish your own post' };
         }
 
-        const clarityScore = await AIService.generateClarityScore(blog.title, blog.content);
+        const clarityScore = await AIService.generateClarityScore(blog.id, blog.title, blog.content);
 
         await prisma.blog.update({
             where: { id: blogId },
@@ -271,7 +271,7 @@ export async function userPerformAiAnalysisAction(blogId: string) {
             return { error: 'Maximum AI evaluation attempts reached.' };
         }
 
-        const analysis = await AIService.performWriterAnalysis(blog.title, blog.content);
+        const analysis = await AIService.performWriterAnalysis(blog.id, blog.title, blog.content);
 
         await prisma.blog.update({
             where: { id: blogId },

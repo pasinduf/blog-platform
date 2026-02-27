@@ -1,3 +1,5 @@
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
+
 interface WriterAnalysisResult {
     clarityScore: number;
     strengths: string[];
@@ -11,52 +13,120 @@ interface AdminSummaryResult {
     risks: string[];
 }
 
+const getAIClient = () => {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+        console.warn("GEMINI_API_KEY is not set. AI services will fail if called.");
+    }
+    return new GoogleGenerativeAI(apiKey || "");
+}
+
+
 export class AIService {
+
     /**
      * Generates feedback for a writer upon draft submission.
-     * In a real implementation this would call an LLM with strict JSON schema parsing and timeouts.
      */
-    static async performWriterAnalysis(title: string, content: string): Promise<WriterAnalysisResult> {
-        console.log(`[AI SERVICE] Analyzing content for: "${title}"`);
+    static async performWriterAnalysis(id: string, title: string, content: string): Promise<WriterAnalysisResult> {
+        console.log(`[AI SERVICE] Analyzing content for: "${title}" , id: "${id}"`);
 
-        // Simulate network delay and processing
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
 
-        return {
-            clarityScore: Math.floor(Math.random() * 20) + 70, // Random score 70-90
-            strengths: ['Clear introduction', 'Engaging tone'],
-            issues: ['Abrupt conclusion'],
-            suggestions: ['Add a summary summarizing the key takeaways.'],
-        };
+            const ai = getAIClient();
+            const model = ai.getGenerativeModel({
+                model: 'gemini-3-flash-preview',
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: SchemaType.OBJECT,
+                        properties: {
+                            clarityScore: { type: SchemaType.INTEGER, description: "A score from 1 to 100 indicating clarity" },
+                            strengths: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "List of strengths in the article" },
+                            issues: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "List of issues in the article" },
+                            suggestions: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "Suggestions to improve the article" }
+                        },
+                        required: ["clarityScore", "strengths", "issues", "suggestions"]
+                    }
+                }
+            });
+
+            const prompt = `Analyze the following blog post draft. Provide a clarity score (1-100), strengths, issues, and specific suggestions for improvement.\n\nTitle: ${title}\n\nContent: ${content}`;
+            const result = await model.generateContent(prompt);
+            const responseText = result.response.text();
+
+            return JSON.parse(responseText) as WriterAnalysisResult;
+        } catch (e) {
+            console.error(`Failed to parse AI response for blog: ${id}`, e);
+            throw new Error("Invalid format from AI");
+        }
     }
 
     /**
      * Generates a concise summary for the admin reviewer.
      */
-    static async generateAdminSummary(title: string, content: string): Promise<AdminSummaryResult> {
-        console.log(`[AI SERVICE] Generating summary for: "${title}"`);
+    static async generateAdminSummary(id: string, title: string, content: string): Promise<AdminSummaryResult> {
+        console.log(`[AI SERVICE] Generating summary for: "${title}", id: ${id}`);
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+            const ai = getAIClient();
+            const model = ai.getGenerativeModel({
+                model: "gemini-3-flash-preview",
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: SchemaType.OBJECT,
+                        properties: {
+                            summary: { type: SchemaType.STRING, description: "A concise summary of the article" },
+                            keyPoints: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "Key points from the article" },
+                            risks: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "Potential risks or controversial elements" }
+                        },
+                        required: ["summary", "keyPoints", "risks"]
+                    }
+                }
+            });
 
-        return {
-            summary: 'The author explains the topic clearly but lacks some depth in the technical sections.',
-            keyPoints: ['Good high level overview', 'Requires prior knowledge to grasp fully'],
-            risks: ['Might be too vague for advanced readers', 'Some statements are subjective'],
-        };
+            const prompt = `Generate a concise summary, key points, and potential risks for the following blog post for an admin review.\n\nTitle: ${title}\n\nContent: ${content}`;
+            const result = await model.generateContent(prompt);
+            const responseText = result.response.text();
+            return JSON.parse(responseText) as AdminSummaryResult;
+        } catch (e) {
+            console.error(`Failed to parse AI response for blog: ${id}`, e);
+            throw new Error("Invalid format from AI");
+        }
     }
 
     /**
      * Generates a clarity score when an admin approves an article.
      * Score between 1 and 100.
      */
-    static async generateClarityScore(title: string, content: string): Promise<number> {
-        console.log(`[AI SERVICE] Generating clarity score for: "${title}"`);
+    static async generateClarityScore(id: string, title: string, content: string): Promise<number> {
+        console.log(`[AI SERVICE] Generating clarity score for: "${title}", id: ${id}`);
 
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        try {
 
-        // Random score 60-100
-        return Math.floor(Math.random() * (100 - 60 + 1)) + 60;
+            const ai = getAIClient();
+            const model = ai.getGenerativeModel({
+                model: "gemini-3-flash-preview",
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: SchemaType.OBJECT,
+                        properties: {
+                            score: { type: SchemaType.INTEGER, description: "Clarity score from 1 to 100" }
+                        },
+                        required: ["score"]
+                    }
+                }
+            });
+
+            const prompt = `Evaluate the clarity of the following blog post and provide a clarity score from 1 to 100.\n\nTitle: ${title}\n\nContent: ${content}`;
+            const result = await model.generateContent(prompt);
+            const responseText = result.response.text();
+            const parsed = JSON.parse(responseText);
+            return parsed.score;
+        } catch (e) {
+            console.error(`Failed to parse AI response for blog: ${id}`, e);
+            throw new Error("Invalid format from AI");
+        }
     }
 }
