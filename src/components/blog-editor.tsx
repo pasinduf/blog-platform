@@ -9,9 +9,10 @@ import { Button } from '@/components/ui/button';
 import { RichTextEditor } from '@/components/rich-text-editor';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Save, Send } from 'lucide-react';
+import { Save, Send, UploadCloud, X } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { saveDraftAction, submitForReviewAction } from '@/app/actions/blog';
+import Image from 'next/image';
 import { toast } from 'sonner';
 
 // Using mock server action logic for the frontend
@@ -22,10 +23,35 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
     const [content, setContent] = useState(initialData?.content || '');
     const [status, setStatus] = useState(initialData?.status || 'DRAFT');
     const [aiAnalysis, setAiAnalysis] = useState<any>(initialData?.aiAnalysis || null);
+    const [coverImage, setCoverImage] = useState<string | null>(initialData?.coverImage || null);
+    const [previewError, setPreviewError] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const [draftId, setDraftId] = useState<string | null>(initialData?.id || null);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            setPreviewError('Please upload a valid image file.');
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            setPreviewError('Image size must be less than 5MB.');
+            return;
+        }
+
+        setPreviewError('');
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setCoverImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+    };
 
     const handleSaveDraft = async () => {
         if (!user) return;
@@ -36,7 +62,7 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
 
         setIsSaving(true);
         try {
-            const result = await saveDraftAction(draftId, title, content);
+            const result = await saveDraftAction(draftId, title, content, coverImage);
 
             if (result.error) {
                 toast.error(result.error);
@@ -66,7 +92,7 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
 
         setIsAnalyzing(true);
         try {
-            const result = await submitForReviewAction(draftId, title, content);
+            const result = await submitForReviewAction(draftId, title, content, coverImage);
 
             if (result.error) {
                 toast.error(result.error);
@@ -93,8 +119,46 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Editor Main Area */}
             <div className="lg:col-span-2 space-y-6">
+                <div className="space-y-4">
+                    <Label className="text-lg">Cover Image (Optional)</Label>
+                    <div className="relative border-2 border-dashed rounded-xl overflow-hidden bg-muted/30 transition-colors hover:bg-muted/50 w-full h-64 md:h-80 flex flex-col items-center justify-center">
+                        {coverImage ? (
+                            <>
+                                <Image src={coverImage} alt="Cover preview" fill className="object-cover" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        onClick={() => {
+                                            setCoverImage(null);
+                                            setPreviewError('');
+                                        }}
+                                        className="gap-2"
+                                    >
+                                        <X className="w-4 h-4" /> Remove Cover
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex flex-col items-center gap-4 text-center p-6">
+                                <UploadCloud className="w-12 h-12 text-muted-foreground" />
+                                <div className="space-y-1">
+                                    <p className="font-medium text-foreground">Click to upload or drag and drop</p>
+                                    <p className="text-sm text-muted-foreground">SVG, PNG, JPG or GIF (max. 5MB)</p>
+                                </div>
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                    onChange={handleImageChange}
+                                />
+                            </div>
+                        )}
+                    </div>
+                    {previewError && <p className="text-sm text-destructive">{previewError}</p>}
+                </div>
+
                 <div className="space-y-2">
                     <Label htmlFor="title" className="text-lg">Title</Label>
                     <Input

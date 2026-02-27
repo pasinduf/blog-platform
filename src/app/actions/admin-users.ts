@@ -185,6 +185,7 @@ export async function getPendingReviewBlogs(searchQuery: string = '') {
         content: blog.content,
         status: blog.status,
         updatedAt: blog.updatedAt,
+        coverImage: blog.coverImage,
         author: {
             id: blog.author.id,
             firstName: blog.author.firstName,

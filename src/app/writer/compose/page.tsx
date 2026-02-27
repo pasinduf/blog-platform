@@ -16,7 +16,7 @@ export default async function ComposePage() {
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                 </Button>
-                <h1 className="text-3xl font-bold">Compose New Article</h1>
+                <h1 className="text-3xl font-bold">Create New Article</h1>
             </div>
 
             <BlogEditorForm />

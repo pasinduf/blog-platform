@@ -63,7 +63,7 @@ export default function AdminUsersPage() {
 
     useEffect(() => {
         const handler = setTimeout(() => {
-            if (searchTerm === '' || searchTerm.trim().length >= 3) {
+            if (searchTerm === '' || searchTerm.trim().length >= 0) {
                 if (activeSearch !== searchTerm) {
                     setActiveSearch(searchTerm);
                 }
@@ -121,14 +121,14 @@ export default function AdminUsersPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
                             <CardTitle>Registered Users</CardTitle>
-                            <CardDescription>Review and manage access requests for the platform.</CardDescription>
+                            <CardDescription className='mt-1'>Review and manage access requests for the platform.</CardDescription>
                         </div>
                         <div className="flex w-full sm:max-w-sm items-center space-x-2">
                             <div className="relative w-full">
                                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     type="text"
-                                    placeholder="Search by name (min 3 chars)..."
+                                    placeholder="Search by name"
                                     className="pl-8"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}

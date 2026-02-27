@@ -24,6 +24,7 @@ export default async function AdminDashboard() {
         title: blog.title,
         content: blog.content,
         status: blog.status,
+        coverImage: blog.coverImage,
         updatedAt: blog.updatedAt,
         author: {
             id: blog.author.id,

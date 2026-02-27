@@ -33,5 +33,6 @@ export async function getAuthorBlogs(statusFilter: string = 'ALL', searchQuery: 
         status: blog.status,
         updatedAt: blog.updatedAt,
         content: blog.content,
+        coverImage: blog.coverImage,
     }));
 }

@@ -49,7 +49,7 @@ export function WriterDashboardClient({ blogs: initialBlogs }: WriterDashboardCl
 
     React.useEffect(() => {
         const handler = setTimeout(() => {
-            if (searchTerm === '' || searchTerm.trim().length >= 3) {
+            if (searchTerm === '' || searchTerm.trim().length >= 0) {
                 if (activeSearch !== searchTerm) {
                     setActiveSearch(searchTerm);
                 }

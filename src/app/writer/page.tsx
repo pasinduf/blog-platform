@@ -1,6 +1,4 @@
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { WriterDashboardClient } from '@/app/writer/writer-dashboard-client';
 import { getSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
@@ -23,6 +21,7 @@ export default async function WriterDashboard() {
         status: blog.status,
         updatedAt: blog.updatedAt,
         content: blog.content,
+        coverImage: blog.coverImage,
     }));
 
     return (

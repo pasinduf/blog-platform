@@ -8,7 +8,8 @@ import { AIService } from '@/services/ai-service';
 export async function saveDraftAction(
     id: string | null | undefined,
     title: string,
-    content: string
+    content: string,
+    coverImage: string | null = null
 ) {
     const user = await getSession();
 
@@ -41,6 +42,7 @@ export async function saveDraftAction(
                     title,
                     content,
                     status: 'DRAFT',
+                    coverImage,
                 },
             });
 
@@ -54,6 +56,7 @@ export async function saveDraftAction(
                     content: content || '',
                     authorId: user.id,
                     status: 'DRAFT',
+                    coverImage,
                 },
             });
 
@@ -69,7 +72,8 @@ export async function saveDraftAction(
 export async function submitForReviewAction(
     id: string | null | undefined,
     title: string,
-    content: string
+    content: string,
+    coverImage: string | null = null
 ) {
     const user = await getSession();
 
@@ -103,6 +107,7 @@ export async function submitForReviewAction(
                 data: {
                     title: title || 'Untitled Draft',
                     content: content || '',
+                    coverImage,
                 },
             });
         } else {
@@ -113,6 +118,7 @@ export async function submitForReviewAction(
                     content: content || '',
                     authorId: user.id,
                     status: 'DRAFT',
+                    coverImage,
                 },
             });
             blogId = newBlog.id;
