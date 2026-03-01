@@ -3,10 +3,10 @@ import { redirect } from 'next/navigation';
 import { ProfileForm } from './profile-form';
 import { prisma } from '@/lib/prisma';
 
-export const metadata = {
-    title: 'Profile Settings | BlogHub',
-    description: 'Manage your personal information and biography',
-};
+// export const metadata = {
+//     title: 'Profile Settings | BlogHub',
+//     description: 'Manage your personal information and biography',
+// };
 
 export default async function ProfilePage() {
     const session = await getSession();

@@ -2,12 +2,6 @@ import { getBookmarksAction } from '@/app/actions/bookmark';
 import { BookmarksClient } from './bookmarks-client';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
-import { BaseBlog } from '@/components/virtual-blog-list';
-
-export const metadata = {
-    title: 'My Bookmarks | BlogHub',
-    description: 'View your saved articles',
-};
 
 export default async function BookmarksPage() {
     const session = await getSession();

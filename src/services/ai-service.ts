@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
+import { prisma } from '@/lib/prisma';
 
 interface WriterAnalysisResult {
     clarityScore: number;
@@ -13,16 +14,30 @@ interface AdminSummaryResult {
     risks: string[];
 }
 
-const getAIClient = () => {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-        console.warn("GEMINI_API_KEY is not set. AI services will fail if called.");
-    }
-    return new GoogleGenerativeAI(apiKey || "");
-}
-
-
 export class AIService {
+    private static async getSettingsConfig(): Promise<Record<string, string>> {
+        const settings = await prisma.setting.findMany({
+            where: {
+                name: { in: ['WRITING_COACH', 'ADMIN_REVIEW', 'CLARITY_SCORE', 'AI_API_KEY'] }
+            }
+        });
+
+        return settings.reduce((acc, setting) => {
+            acc[setting.name] = setting.value;
+            return acc;
+        }, {} as Record<string, string>);
+    }
+
+    private static getAIClient(apiKey: string) {
+        if (!apiKey) {
+            console.warn("GEMINI_API_KEY is not set. AI services will fail if called.");
+        }
+        return new GoogleGenerativeAI(apiKey || "");
+    }
+
+    private static formatPrompt(template: string, title: string, content: string): string {
+        return `${template}\n\nTitle: ${title}\nContent: ${content}`;
+    }
 
     /**
      * Generates feedback for a writer upon draft submission.
@@ -31,8 +46,9 @@ export class AIService {
         console.log(`[AI SERVICE] Analyzing content for: "${title}" , id: "${id}"`);
 
         try {
+            const settings = await this.getSettingsConfig();
 
-            const ai = getAIClient();
+            const ai = this.getAIClient(settings.AI_API_KEY || process.env.GEMINI_API_KEY || "");
             const model = ai.getGenerativeModel({
                 model: 'gemini-3-flash-preview',
                 generationConfig: {
@@ -50,7 +66,12 @@ export class AIService {
                 }
             });
 
-            const prompt = `Analyze the following blog post draft. Provide a clarity score (1-100), strengths, issues, and specific suggestions for improvement.\n\nTitle: ${title}\n\nContent: ${content}`;
+            if (!settings.WRITING_COACH) {
+                throw new Error("Writing Coach AI setting not found in database.");
+            }
+
+            const prompt = this.formatPrompt(settings.WRITING_COACH, title, content);
+
             const result = await model.generateContent(prompt);
             const responseText = result.response.text();
 
@@ -68,7 +89,8 @@ export class AIService {
         console.log(`[AI SERVICE] Generating summary for: "${title}", id: ${id}`);
 
         try {
-            const ai = getAIClient();
+            const settings = await this.getSettingsConfig();
+            const ai = this.getAIClient(settings.AI_API_KEY);
             const model = ai.getGenerativeModel({
                 model: "gemini-3-flash-preview",
                 generationConfig: {
@@ -85,7 +107,12 @@ export class AIService {
                 }
             });
 
-            const prompt = `Generate a concise summary, key points, and potential risks for the following blog post for an admin review.\n\nTitle: ${title}\n\nContent: ${content}`;
+            if (!settings.ADMIN_REVIEW) {
+                throw new Error("Admin Review AI setting not found in database.");
+            }
+
+            const prompt = this.formatPrompt(settings.ADMIN_REVIEW, title, content);
+
             const result = await model.generateContent(prompt);
             const responseText = result.response.text();
             return JSON.parse(responseText) as AdminSummaryResult;
@@ -103,8 +130,8 @@ export class AIService {
         console.log(`[AI SERVICE] Generating clarity score for: "${title}", id: ${id}`);
 
         try {
-
-            const ai = getAIClient();
+            const settings = await this.getSettingsConfig();
+            const ai = this.getAIClient(settings.AI_API_KEY);
             const model = ai.getGenerativeModel({
                 model: "gemini-3-flash-preview",
                 generationConfig: {
@@ -119,7 +146,12 @@ export class AIService {
                 }
             });
 
-            const prompt = `Evaluate the clarity of the following blog post and provide a clarity score from 1 to 100.\n\nTitle: ${title}\n\nContent: ${content}`;
+            if (!settings.CLARITY_SCORE) {
+                throw new Error("Clarity Score AI setting not found in database.");
+            }
+
+            const prompt = this.formatPrompt(settings.CLARITY_SCORE, title, content);
+
             const result = await model.generateContent(prompt);
             const responseText = result.response.text();
             const parsed = JSON.parse(responseText);

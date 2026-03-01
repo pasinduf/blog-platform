@@ -24,6 +24,7 @@ model User {
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
   passwordResetTokens  PasswordResetToken[]
+  updatedSettings      Setting[]            @relation("UserSettings")
 }
 
 model PasswordResetToken {
@@ -129,4 +130,14 @@ model Bookmark {
   createdAt DateTime @default(now())
 
   @@unique([userId, blogId])
+}
+
+model Setting {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  description   String   @db.Text
+  value         String   @db.Text
+  updatedAt     DateTime @updatedAt
+  updatedBy     String?
+  updater       User?    @relation("UserSettings", fields: [updatedBy], references: [id])
 }

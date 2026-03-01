@@ -12,7 +12,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LogOut, PenSquare, Bookmark, Menu, UserCircle, UserIcon } from 'lucide-react';
+import { LogOut, PenSquare, Bookmark, Menu, UserCircle, UserIcon, Settings } from 'lucide-react';
 import { logoutAction } from '@/app/actions/auth';
 import { ThemeToggle } from '@/components/theme-toggle';
 
@@ -40,9 +40,6 @@ export function Navbar() {
                             <>
                                 <Link href="/admin" className="text-muted-foreground hover:text-primary transition-colors text-lg">
                                     Review Queue
-                                </Link>
-                                <Link href="/admin/leaderboard" className="text-muted-foreground hover:text-primary transition-colors text-lg">
-                                    Leaderboard
                                 </Link>
                                 <Link href="/admin/users" className="text-muted-foreground hover:text-primary transition-colors text-lg">
                                     Users
@@ -90,13 +87,13 @@ export function Navbar() {
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/admin/leaderboard" className="w-full cursor-pointer">
-                                                Leaderboard
+                                            <Link href="/admin/users" className="w-full cursor-pointer">
+                                                Users
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/admin/users" className="w-full cursor-pointer">
-                                                Users
+                                            <Link href="/admin/settings" className="w-full cursor-pointer">
+                                                Settings
                                             </Link>
                                         </DropdownMenuItem>
                                     </>
@@ -135,9 +132,17 @@ export function Navbar() {
                                 <DropdownMenuItem asChild>
                                     <Link href="/profile" className="w-full cursor-pointer flex items-center">
                                         <UserIcon className="mr-2 h-4 w-4" />
-                                        <span>Profile Settings</span>
+                                        <span>Profile</span>
                                     </Link>
                                 </DropdownMenuItem>
+                                {role === 'ADMIN' &&
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/admin/settings" className="w-full cursor-pointer flex items-center">
+                                            <Settings className="mr-2 h-4 w-4" />
+                                            <span>Settings</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                }
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     className="text-red-600 focus:text-red-600 cursor-pointer"
