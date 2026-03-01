@@ -76,6 +76,8 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                     // Update URL without full reload so the user continues editing
                     window.history.replaceState(null, '', `/writer/edit/${result.blogId}`);
                 }
+
+                setStatus('DRAFT');
             }
         } catch (error) {
             console.error(error);
@@ -254,7 +256,30 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                     </CardContent>
                 </Card>
 
-                {aiAnalysis && (
+                {isEvaluating && (
+                    <Card className="border-primary/50 bg-primary/5">
+                        <CardHeader>
+                            <CardTitle className="text-primary flex items-center gap-2">
+                                <Spinner className="h-5 w-5" />
+                                Analyzing your article...
+                            </CardTitle>
+                            <CardDescription>Our AI writing coach is reviewing your draft. This might take a few seconds.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="space-y-2">
+                                <div className="h-4 bg-muted-foreground/20 rounded w-1/4 animate-pulse"></div>
+                                <div className="h-8 bg-muted-foreground/20 rounded w-16 animate-pulse"></div>
+                            </div>
+                            <div className="space-y-2">
+                                <div className="h-4 bg-muted-foreground/20 rounded w-1/4 animate-pulse"></div>
+                                <div className="h-4 bg-muted-foreground/20 rounded w-full animate-pulse"></div>
+                                <div className="h-4 bg-muted-foreground/20 rounded w-5/6 animate-pulse"></div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {!isEvaluating && aiAnalysis && (
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-primary text-xl">AI Feedback</CardTitle>

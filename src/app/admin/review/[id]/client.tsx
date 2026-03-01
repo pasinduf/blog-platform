@@ -122,11 +122,32 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                             </Button>
                         </CardHeader>
                         <CardContent>
-                            {!aiSummary ? (
+                            {isGenerating && (
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-2 text-primary">
+                                        <Spinner className="h-5 w-5" />
+                                        <span className="font-semibold">Analyzing the content...</span>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="h-4 bg-muted-foreground/20 rounded w-1/4 animate-pulse"></div>
+                                        <div className="h-4 bg-muted-foreground/20 rounded w-full animate-pulse"></div>
+                                        <div className="h-4 bg-muted-foreground/20 rounded w-5/6 animate-pulse"></div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="h-4 bg-muted-foreground/20 rounded w-1/4 animate-pulse"></div>
+                                        <div className="h-4 bg-muted-foreground/20 rounded w-full animate-pulse"></div>
+                                        <div className="h-4 bg-muted-foreground/20 rounded w-3/4 animate-pulse"></div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {!isGenerating && !aiSummary && (
                                 <div className="text-sm text-muted-foreground text-center py-4">
                                     Generate an AI summary to help review this post quickly.
                                 </div>
-                            ) : (
+                            )}
+
+                            {!isGenerating && aiSummary && (
                                 <div className="space-y-4 text-sm">
                                     <div><span className="font-semibold block">Summary:</span> {aiSummary.summary}</div>
                                     <div>
