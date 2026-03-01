@@ -51,7 +51,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                 toast.error(result.error);
             } else {
                 toast.success('Comment sent to writer for revision.');
-                router.push('/admin');
+                router.push('/reviews');
             }
         } catch (error) {
             console.error(error);
@@ -69,7 +69,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                 toast.error(result.error);
             } else {
                 toast.success('Blog Published successfully!');
-                router.push('/admin');
+                router.push('/reviews');
             }
         } catch (error) {
             toast.error('Failed to publish blog.');
@@ -82,7 +82,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
         <div className="container mx-auto py-8">
             <div className="mb-6 flex items-center gap-4">
                 <Button variant="ghost" size="icon" asChild>
-                    <Link href="/admin">
+                    <Link href="/reviews">
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                 </Button>

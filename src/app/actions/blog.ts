@@ -138,7 +138,7 @@ export async function submitForReviewAction(
         });
 
         revalidatePath('/writer');
-        revalidatePath('/admin');
+        revalidatePath('/reviews');
         return { success: true, blogId };
     } catch (error) {
         console.error('Failed to submit for review:', error);
@@ -167,7 +167,7 @@ export async function generateAdminSummaryAction(blogId: string) {
             data: { adminAiSummary: summary as any },
         });
 
-        revalidatePath(`/admin/review/${blogId}`);
+        revalidatePath(`/reviews/${blogId}`);
         return { success: true, summary };
     } catch (error) {
         console.error('Failed to generate summary:', error);
@@ -206,8 +206,8 @@ export async function requestRevisionAction(blogId: string, commentContent: stri
             data: { status: 'DRAFT' }, // Send back to writer
         });
 
-        revalidatePath('/admin');
-        revalidatePath(`/admin/review/${blogId}`);
+        revalidatePath('/reviews');
+        revalidatePath(`/reviews/${blogId}`);
         return { success: true };
     } catch (error) {
         console.error('Failed to request revision:', error);
@@ -239,7 +239,7 @@ export async function publishBlogAction(blogId: string) {
             },
         });
 
-        revalidatePath('/admin');
+        revalidatePath('/reviews');
         revalidatePath('/'); // Public feed
         return { success: true };
     } catch (error) {

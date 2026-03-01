@@ -73,7 +73,7 @@ export async function approvePost(userId: string, assignAdmin: boolean = false) 
 
         await sendWelcomeEmail(user.email, `${user.firstName} ${user.lastName}`);
 
-        revalidatePath('/admin/users');
+        revalidatePath('/users');
         return { success: 'User approved successfully' };
     } catch (error) {
         toast.error('Failed to approve user');
@@ -94,7 +94,7 @@ export async function promoteToAdmin(userId: string) {
             data: { role: 'ADMIN' },
         });
 
-        revalidatePath('/admin/users');
+        revalidatePath('/users');
         return { success: 'User promoted to ADMIN successfully' };
     } catch (error) {
         return { error: 'Failed to promote user' };
@@ -126,7 +126,7 @@ export async function demoteToUser(userId: string) {
             data: { role: 'USER' },
         });
 
-        revalidatePath('/admin/users');
+        revalidatePath('/users');
         return { success: 'User demoted to USER successfully' };
     } catch (error) {
         return { error: 'Failed to demote user' };
@@ -146,7 +146,7 @@ export async function rejectPost(userId: string) {
             data: { status: 'REJECTED' },
         });
 
-        revalidatePath('/admin/users');
+        revalidatePath('/users');
         return { success: 'User rejected successfully' };
     } catch (error) {
         toast.error('Failed to reject user');

@@ -56,7 +56,7 @@ export default async function LeaderboardPage() {
             <div className="mb-8 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" asChild>
-                        <Link href="/admin">
+                        <Link href="/reviews">
                             <ArrowLeft className="h-4 w-4" />
                         </Link>
                     </Button>

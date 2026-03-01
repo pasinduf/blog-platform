@@ -38,10 +38,10 @@ export function Navbar() {
                         )}
                         {role === 'ADMIN' && (
                             <>
-                                <Link href="/admin" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                                <Link href="/reviews" className="text-muted-foreground hover:text-primary transition-colors text-lg">
                                     Review
                                 </Link>
-                                <Link href="/admin/users" className="text-muted-foreground hover:text-primary transition-colors text-lg">
+                                <Link href="/users" className="text-muted-foreground hover:text-primary transition-colors text-lg">
                                     Users
                                 </Link>
                             </>
@@ -82,17 +82,17 @@ export function Navbar() {
                                 {role === 'ADMIN' && (
                                     <>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/admin" className="w-full cursor-pointer">
+                                            <Link href="/reviews" className="w-full cursor-pointer">
                                                 Review
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/admin/users" className="w-full cursor-pointer">
+                                            <Link href="/users" className="w-full cursor-pointer">
                                                 Users
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/admin/settings" className="w-full cursor-pointer">
+                                            <Link href="/settings" className="w-full cursor-pointer">
                                                 Settings
                                             </Link>
                                         </DropdownMenuItem>
@@ -137,7 +137,7 @@ export function Navbar() {
                                 </DropdownMenuItem>
                                 {role === 'ADMIN' &&
                                     <DropdownMenuItem asChild>
-                                        <Link href="/admin/settings" className="w-full cursor-pointer flex items-center">
+                                        <Link href="/settings" className="w-full cursor-pointer flex items-center">
                                             <Settings className="mr-2 h-4 w-4" />
                                             <span>Settings</span>
                                         </Link>

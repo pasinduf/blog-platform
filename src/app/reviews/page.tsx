@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ReviewQueueClient } from '@/app/admin/review-queue-client';
+import { ReviewQueueClient } from '@/app/reviews/review-queue-client';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
@@ -38,7 +38,7 @@ export default async function AdminDashboard() {
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">Admin Review Queue</h1>
                 <Button variant="secondary" asChild>
-                    <Link href="/admin/leaderboard">View Leaderboard</Link>
+                    <Link href="/leaderboard">View Leaderboard</Link>
                 </Button>
             </div>
 

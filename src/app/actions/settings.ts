@@ -72,7 +72,7 @@ export async function updateSettingAction(state: any, formData: FormData) {
             }
         });
 
-        revalidatePath('/admin/settings');
+        revalidatePath('/settings');
         return { success: 'Setting updated successfully!' };
     } catch (error) {
         console.error('Failed to update setting', error);
