@@ -39,7 +39,7 @@ export function Navbar() {
                         {role === 'ADMIN' && (
                             <>
                                 <Link href="/admin" className="text-muted-foreground hover:text-primary transition-colors text-lg">
-                                    Review Queue
+                                    Review
                                 </Link>
                                 <Link href="/admin/users" className="text-muted-foreground hover:text-primary transition-colors text-lg">
                                     Users
@@ -83,7 +83,7 @@ export function Navbar() {
                                     <>
                                         <DropdownMenuItem asChild>
                                             <Link href="/admin" className="w-full cursor-pointer">
-                                                Review Queue
+                                                Review
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>

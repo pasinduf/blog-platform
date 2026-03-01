@@ -200,17 +200,28 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                     <RichTextEditor content={content} onChange={setContent} />
                 </div>
 
-                <div className="flex gap-4">
-                    <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving}>
-                        {isSaving && <Spinner className="mr-2 h-4 w-4" />}
-                        <Save className="mr-2 h-4 w-4" />
-                        Save Draft
-                    </Button>
-                    <Button onClick={handleSubmitForReview} disabled={isAnalyzing || isSaving || !title || !content}>
-                        {isAnalyzing && <Spinner className="mr-2 h-4 w-4" />}
-                        <Send className="mr-2 h-4 w-4" />
-                        Submit for Review
-                    </Button>
+                <div className="space-y-4">
+                    {(isSaving || isAnalyzing) && (
+                        <div className="p-4 border border-primary/50 bg-primary/5 rounded-md flex flex-col items-center justify-center gap-2 text-center">
+                            <Spinner className="h-6 w-6 text-primary" />
+                            <p className="text-sm font-medium text-primary">
+                                {isSaving ? 'Saving your draft...' : 'Submitting article for review...'}
+                            </p>
+                            <p className="text-xs text-muted-foreground">Please wait a moment while we process your request.</p>
+                        </div>
+                    )}
+                    <div className="flex gap-4">
+                        <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving || isAnalyzing}>
+                            {isSaving && <Spinner className="mr-2 h-4 w-4" />}
+                            <Save className={isSaving ? "hidden" : "mr-2 h-4 w-4"} />
+                            {isSaving ? 'Saving...' : 'Save Draft'}
+                        </Button>
+                        <Button onClick={handleSubmitForReview} disabled={isAnalyzing || isSaving || !title || !content}>
+                            {isAnalyzing && <Spinner className="mr-2 h-4 w-4" />}
+                            <Send className={isAnalyzing ? "hidden" : "mr-2 h-4 w-4"} />
+                            {isAnalyzing ? 'Submitting...' : 'Submit for Review'}
+                        </Button>
+                    </div>
                 </div>
             </div>
 

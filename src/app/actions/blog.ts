@@ -108,6 +108,7 @@ export async function submitForReviewAction(
                     title: title || 'Untitled Draft',
                     content: content || '',
                     coverImage,
+                    clarityScore: 0,
                 },
             });
         } else {

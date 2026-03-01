@@ -220,6 +220,13 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                             </div>
 
                             <div className="relative border-t my-4 py-4">
+                                {isPublishing && (
+                                    <div className="mb-4 p-4 border border-primary/50 bg-primary/5 rounded-md flex flex-col items-center justify-center gap-2 text-center">
+                                        <Spinner className="h-6 w-6 text-primary" />
+                                        <p className="text-sm font-medium text-primary">Publishing & Generating AI Clarity Score...</p>
+                                        <p className="text-xs text-muted-foreground">This may take a few moments.</p>
+                                    </div>
+                                )}
                                 <Button
                                     className="w-full"
                                     variant="default"
@@ -227,7 +234,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                     disabled={isPublishing || isOwnPost}
                                 >
                                     {isPublishing ? <Spinner className="mr-2 h-4 w-4" /> : <CheckSquare className="mr-2 h-4 w-4" />}
-                                    Approve & Publish
+                                    {isPublishing ? 'Publishing...' : 'Approve & Publish'}
                                 </Button>
                             </div>
                         </CardContent>
