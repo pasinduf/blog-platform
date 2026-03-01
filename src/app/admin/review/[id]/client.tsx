@@ -13,7 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { generateAdminSummaryAction, requestRevisionAction, publishBlogAction } from '@/app/actions/blog';
 import { toast } from 'sonner';
 import { formatDate } from '@/lib/utils';
-
+import { Badge } from '@/components/ui/badge';
 export function AdminReviewClient({ blog }: { blog: any }) {
     const router = useRouter();
     const { user } = useAuth();
@@ -153,15 +153,33 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                     <div>
                                         <span className="font-semibold block">Key Points:</span>
                                         <ul className="list-disc pl-5 text-muted-foreground">
-                                            {aiSummary.keyPoints.map((k: string, i: number) => <li key={i}>{k}</li>)}
+                                            {aiSummary.keyPoints?.map((k: string, i: number) => <li key={i}>{k}</li>)}
                                         </ul>
                                     </div>
+                                    {aiSummary.tags && aiSummary.tags.length > 0 && (
+                                        <div>
+                                            <span className="font-semibold block">Tags:</span>
+                                            <div className="flex flex-wrap gap-2 mt-1">
+                                                {aiSummary.tags.map((tag: string, i: number) => (
+                                                    <Badge key={i} variant="outline" className="text-xs">{tag}</Badge>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <div>
                                         <span className="font-semibold block text-orange-500">Potential Risks:</span>
                                         <ul className="list-disc pl-5 text-muted-foreground">
-                                            {aiSummary.risks.map((k: string, i: number) => <li key={i}>{k}</li>)}
+                                            {aiSummary.risks?.map((k: string, i: number) => <li key={i}>{k}</li>)}
                                         </ul>
                                     </div>
+
+                                    {aiSummary.review && (
+                                        <div>
+                                            <span className="font-semibold block text-blue-600 dark:text-blue-400">Review Notes:</span>
+                                            <p className="text-muted-foreground italic mt-1">{aiSummary.review}</p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </CardContent>

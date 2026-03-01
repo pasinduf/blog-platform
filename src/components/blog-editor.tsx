@@ -286,10 +286,10 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                             <CardDescription>Review and improve your article</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div>
+                            {/* <div>
                                 <span className="text-sm font-medium">Clarity Score</span>
                                 <div className="text-2xl font-bold text-primary">{aiAnalysis.clarityScore}/100</div>
-                            </div>
+                            </div> */}
                             <div>
                                 <span className="text-sm font-medium mb-1 block">Strengths</span>
                                 <ul className="list-disc pl-5 text-sm space-y-1 text-muted-foreground">

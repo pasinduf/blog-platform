@@ -56,12 +56,11 @@ export class AIService {
                     responseSchema: {
                         type: SchemaType.OBJECT,
                         properties: {
-                            clarityScore: { type: SchemaType.INTEGER, description: "A score from 1 to 100 indicating clarity" },
                             strengths: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "List of strengths in the article" },
                             issues: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "List of issues in the article" },
                             suggestions: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "Suggestions to improve the article" }
                         },
-                        required: ["clarityScore", "strengths", "issues", "suggestions"]
+                        required: ["strengths", "issues", "suggestions"]
                     }
                 }
             });
@@ -98,11 +97,13 @@ export class AIService {
                     responseSchema: {
                         type: SchemaType.OBJECT,
                         properties: {
-                            summary: { type: SchemaType.STRING, description: "A concise summary of the article" },
+                            summary: { type: SchemaType.STRING, description: "A concise but meaningful summary of the article (1-2 sentences)" },
                             keyPoints: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "Key points from the article" },
-                            risks: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "Potential risks or controversial elements" }
+                            risks: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "Potential risks or controversial elements" },
+                            tags: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING }, description: "Tags for the article" },
+                            review: { type: SchemaType.STRING, description: "Overall editorial evaluation and publishing suggestion" },
                         },
-                        required: ["summary", "keyPoints", "risks"]
+                        required: ["summary", "keyPoints", "risks", "tags", "review"]
                     }
                 }
             });
