@@ -60,8 +60,8 @@ export default function BlogCard({ blog, renderAction, renderContent, compact = 
     }
 
     return (
-        <article className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-100">
-            <div className="relative h-48 overflow-hidden">
+        <article className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-100 flex flex-col h-full">
+            <div className="relative h-48 overflow-hidden shrink-0">
                 {blog.coverImage ? (
                     <Image
                         src={blog.coverImage}
@@ -80,7 +80,7 @@ export default function BlogCard({ blog, renderAction, renderContent, compact = 
                     </div> */}
             </div>
 
-            <div className="p-6">
+            <div className="p-6 flex flex-col flex-1">
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
                     {blog.updatedAt &&
                         <div className="flex items-center gap-1">
@@ -129,7 +129,7 @@ export default function BlogCard({ blog, renderAction, renderContent, compact = 
                 {blog.excerpt && <p className="text-gray-600 mb-4 line-clamp-3">{blog.excerpt}</p>}
 
                 {renderAction ?
-                    <div className="flex justify-between items-center">
+                    <div className="mt-auto flex justify-between items-center">
                         {/* <div className="text-sm font-medium text-muted-foreground">
                             {blog.commentCount !== undefined && `${blog.commentCount} Comments`}
                         </div> */}
@@ -138,7 +138,7 @@ export default function BlogCard({ blog, renderAction, renderContent, compact = 
                         </div>
                     </div>
                     :
-                    <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                    <div className="mt-auto flex justify-between items-center pt-4 border-t border-gray-100">
                         <Link href={`/article/${blog.id}`} className="inline-flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 group/link">
                             Read Article
                             <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
