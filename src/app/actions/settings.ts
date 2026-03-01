@@ -10,16 +10,16 @@ export async function getSettings() {
         throw new Error('Unauthorized');
     }
 
+    const names = ['WRITING_COACH',
+        'ADMIN_REVIEW',
+        'CLARITY_SCORE',
+        'AI_API_KEY'];
+
     try {
         const settings = await prisma.setting.findMany({
             where: {
                 name: {
-                    in: [
-                        'WRITING_COACH',
-                        'ADMIN_REVIEW',
-                        'CLARITY_SCORE',
-                        'AI_API_KEY'
-                    ]
+                    in: names
                 }
             },
             include: {
@@ -32,8 +32,9 @@ export async function getSettings() {
             }
         });
 
+        const sorted = names.map(name => settings.find(s => s.name === name)).filter(Boolean)
         // Map to include updatedUserName
-        const formattedSettings = settings.map(s => ({
+        const formattedSettings = sorted.map((s: any) => ({
             ...s,
             updatedUserName: s.updater ? `${s.updater.firstName} ${s.updater.lastName}` : null
         }));
