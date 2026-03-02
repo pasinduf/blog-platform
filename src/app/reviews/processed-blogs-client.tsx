@@ -22,9 +22,17 @@ import { formatDate } from '@/lib/utils';
 
 interface ProcessedBlogsClientProps {
     currentUserId: string;
+    initialBlogs: any[];
+    initialTotalPages: number;
+    initialTotalCount: number;
 }
 
-export function ProcessedBlogsClient({ currentUserId }: ProcessedBlogsClientProps) {
+export function ProcessedBlogsClient({
+    currentUserId,
+    initialBlogs,
+    initialTotalPages,
+    initialTotalCount
+}: ProcessedBlogsClientProps) {
     const [searchTerm, setSearchTerm] = React.useState('');
     const [activeSearch, setActiveSearch] = React.useState('');
 
@@ -37,13 +45,15 @@ export function ProcessedBlogsClient({ currentUserId }: ProcessedBlogsClientProp
     const dropdownRef = React.useRef<HTMLDivElement>(null);
     const authorIdFilter = selectedAuthor ? selectedAuthor.id : 'all';
 
-    const [blogs, setBlogs] = React.useState<any[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const [blogs, setBlogs] = React.useState<any[]>(initialBlogs);
+    const [isLoading, setIsLoading] = React.useState(false);
     const [isStatusUpdating, setIsStatusUpdating] = React.useState(false);
 
     const [currentPage, setCurrentPage] = React.useState(1);
-    const [totalPages, setTotalPages] = React.useState(1);
-    const [totalCount, setTotalCount] = React.useState(0);
+    const [totalPages, setTotalPages] = React.useState(initialTotalPages);
+    const [totalCount, setTotalCount] = React.useState(initialTotalCount);
+
+    const isFirstRender = React.useRef(true);
 
     // Click outside handler for author dropdown
     React.useEffect(() => {
@@ -113,6 +123,10 @@ export function ProcessedBlogsClient({ currentUserId }: ProcessedBlogsClientProp
     }, [currentPage, activeSearch, authorIdFilter]);
 
     React.useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         fetchBlogs();
     }, [fetchBlogs]);
 

@@ -39,9 +39,16 @@ export async function getProcessedBlogs(
     const [blogs, totalCount] = await Promise.all([
         prisma.blog.findMany({
             where: whereClause,
-            include: {
-                author: { select: { id: true, firstName: true, lastName: true } },
-                publishedBy: { select: { id: true, firstName: true, lastName: true } }
+            select: {
+                id: true,
+                title: true,
+                status: true,
+                clarityScore: true,
+                adminAiSummary: true,
+                publishedAt: true,
+                updatedAt: true,
+                publishedBy: { select: { id: true, firstName: true, lastName: true } },
+                author: { select: { id: true, firstName: true, lastName: true } }
             },
             orderBy: { updatedAt: 'desc' },
             skip,

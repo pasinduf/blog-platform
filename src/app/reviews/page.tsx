@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ReviewQueueClient } from '@/app/reviews/review-queue-client';
 import { ProcessedBlogsClient } from '@/app/reviews/processed-blogs-client';
+import { getProcessedBlogs } from '@/app/actions/processed-blogs';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
@@ -13,18 +14,25 @@ export default async function AdminDashboard() {
         redirect('/');
     }
 
-    const dbBlogs = await prisma.blog.findMany({
-        where: { status: 'SUBMITTED' },
-        include: {
-            author: { select: { id: true, firstName: true, lastName: true } },
-        },
-        orderBy: { createdAt: 'desc' },
-    });
+    const [dbBlogs, initialProcessedProps] = await Promise.all([
+        prisma.blog.findMany({
+            where: { status: 'SUBMITTED' },
+            select: {
+                id: true,
+                title: true,
+                status: true,
+                coverImage: true,
+                updatedAt: true,
+                author: { select: { id: true, firstName: true, lastName: true } },
+            },
+            orderBy: { createdAt: 'desc' },
+        }),
+        getProcessedBlogs(1, 10, '', 'all')
+    ]);
 
     const formattedBlogs = dbBlogs.map((blog) => ({
         id: blog.id,
         title: blog.title,
-        content: blog.content,
         status: blog.status,
         coverImage: blog.coverImage,
         updatedAt: blog.updatedAt,
@@ -58,7 +66,12 @@ export default async function AdminDashboard() {
                 </TabsContent>
 
                 <TabsContent value="processed" className="mt-0">
-                    <ProcessedBlogsClient currentUserId={user.id} />
+                    <ProcessedBlogsClient
+                        currentUserId={user.id}
+                        initialBlogs={initialProcessedProps.blogs}
+                        initialTotalPages={initialProcessedProps.totalPages}
+                        initialTotalCount={initialProcessedProps.totalCount}
+                    />
                 </TabsContent>
             </Tabs>
         </div>
