@@ -46,8 +46,8 @@ export default async function AdminDashboard() {
 
             <Tabs defaultValue="pending" className="w-full">
                 <TabsList className="mb-6">
-                    <TabsTrigger value="pending">Pending Reviews</TabsTrigger>
-                    <TabsTrigger value="processed">All Reviewed</TabsTrigger>
+                    <TabsTrigger value="pending" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Pending Reviews</TabsTrigger>
+                    <TabsTrigger value="processed" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">All Reviewed</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="pending" className="mt-0">
