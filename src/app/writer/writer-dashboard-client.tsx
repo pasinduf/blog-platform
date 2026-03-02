@@ -63,7 +63,7 @@ export function WriterDashboardClient({ blogs: initialBlogs }: WriterDashboardCl
     if (initialBlogs.length === 0 && !searchTerm && statusFilter === 'ALL') {
         return (
             <div className="flex flex-col items-center justify-center py-24 text-center border rounded-lg border-dashed gap-4">
-                <p className="text-muted-foreground text-lg">Start writing your first blog.</p>
+                <p className="text-muted-foreground text-lg">Start writing your first article.</p>
                 <Button asChild>
                     <Link href="/writer/compose">Create Article</Link>
                 </Button>
