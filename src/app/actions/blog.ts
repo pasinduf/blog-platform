@@ -237,6 +237,8 @@ export async function publishBlogAction(blogId: string) {
             where: { id: blogId },
             data: {
                 status: 'PUBLISHED',
+                publishedAt: new Date(),
+                publishedById: user.id,
             },
         });
 

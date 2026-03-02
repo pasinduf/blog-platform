@@ -17,6 +17,7 @@ model User {
   role          Role           @default(USER) // WRITER, ADMIN, USER
   status        UserStatus     @default(PENDING)
   blogs         Blog[]         @relation("AuthoredBlogs")
+  publishedBlogs Blog[]        @relation("PublishedBlogs")
   comments      Comment[]
   adminComments AdminComment[]
   reactions     Reaction[]
@@ -71,6 +72,9 @@ model Blog {
   comments      Comment[]
   adminComments AdminComment[]
   bookmarks     Bookmark[]
+  publishedAt   DateTime?
+  publishedById String?
+  publishedBy   User?          @relation("PublishedBlogs", fields: [publishedById], references: [id])
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
