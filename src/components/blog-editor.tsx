@@ -29,10 +29,11 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
     const [isSaving, setIsSaving] = useState(false);
     const [isEvaluating, setIsEvaluating] = useState(false);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
 
     const [draftId, setDraftId] = useState<string | null>(initialData?.id || null);
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -47,12 +48,26 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
         }
 
         setPreviewError('');
+        setIsUploadingImage(true);
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setCoverImage(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+        try {
+            const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+                method: 'POST',
+                body: file,
+            });
+
+            if (!response.ok) {
+                throw new Error('Upload failed');
+            }
+
+            const blob = await response.json();
+            setCoverImage(blob.url);
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            setPreviewError('Failed to upload image.');
+        } finally {
+            setIsUploadingImage(false);
+        }
     };
 
     const handleSaveDraft = async () => {
@@ -165,6 +180,11 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                                     </Button>
                                 </div>
                             </>
+                        ) : isUploadingImage ? (
+                            <div className="flex flex-col items-center gap-4 text-center p-6">
+                                <Spinner className="w-8 h-8 text-primary" />
+                                <p className="font-medium text-foreground">Uploading image...</p>
+                            </div>
                         ) : (
                             <div className="flex flex-col items-center gap-4 text-center p-6">
                                 <UploadCloud className="w-12 h-12 text-muted-foreground" />
@@ -177,6 +197,7 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                                     accept="image/*"
                                     className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                                     onChange={handleImageChange}
+                                    disabled={isUploadingImage}
                                 />
                             </div>
                         )}
@@ -211,12 +232,12 @@ export function BlogEditorForm({ initialData }: { initialData?: any }) {
                         </div>
                     )}
                     <div className="flex gap-4">
-                        <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving || isAnalyzing}>
+                        <Button variant="outline" onClick={handleSaveDraft} disabled={isSaving || isAnalyzing || isUploadingImage}>
                             {isSaving && <Spinner className="mr-2 h-4 w-4" />}
                             <Save className={isSaving ? "hidden" : "mr-2 h-4 w-4"} />
                             {isSaving ? 'Saving...' : 'Save Draft'}
                         </Button>
-                        <Button onClick={handleSubmitForReview} disabled={isAnalyzing || isSaving || !title || !content}>
+                        <Button onClick={handleSubmitForReview} disabled={isAnalyzing || isSaving || !title || !content || isUploadingImage}>
                             {isAnalyzing && <Spinner className="mr-2 h-4 w-4" />}
                             <Send className={isAnalyzing ? "hidden" : "mr-2 h-4 w-4"} />
                             {isAnalyzing ? 'Submitting...' : 'Submit for Review'}
