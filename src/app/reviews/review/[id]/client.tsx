@@ -181,7 +181,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                     <div>
                                         <span className="font-semibold block text-orange-500">Potential Risks:</span>
                                         <ul className="list-disc pl-5 text-muted-foreground">
-                                            {aiSummary.risks.length > 0 ? aiSummary.risks?.map((k: string, i: number) => <li key={i}>{k}</li>) : 'N/A'}
+                                            {aiSummary.risks?.map((k: string, i: number) => <li key={i}>{k}</li>)}
                                         </ul>
                                     </div>
 
