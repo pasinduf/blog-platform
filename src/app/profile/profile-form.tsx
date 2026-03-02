@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertCircle, UserCircle, KeyRound, UploadCloud } from 'lucide-react';
+import { AlertCircle, UserCircle, KeyRound, UploadCloud, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -26,6 +26,7 @@ export function ProfileForm({ user }: { user: UserProfile }) {
     const [state, formAction, isPending] = useActionState(updateProfileAction, null);
     const [imagePreview, setImagePreview] = useState<string | null>(user.profileImage);
     const [previewError, setPreviewError] = useState('');
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
 
     useEffect(() => {
         if (state?.success) {
@@ -33,7 +34,7 @@ export function ProfileForm({ user }: { user: UserProfile }) {
         }
     }, [state]);
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -49,12 +50,26 @@ export function ProfileForm({ user }: { user: UserProfile }) {
         }
 
         setPreviewError('');
+        setIsUploadingImage(true);
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImagePreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+        try {
+            const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+                method: 'POST',
+                body: file,
+            });
+
+            if (!response.ok) {
+                throw new Error('Upload failed');
+            }
+
+            const blob = await response.json();
+            setImagePreview(blob.url);
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            setPreviewError('Failed to upload image.');
+        } finally {
+            setIsUploadingImage(false);
+        }
     };
 
     return (
@@ -102,10 +117,19 @@ export function ProfileForm({ user }: { user: UserProfile }) {
                                     />
                                     <Label
                                         htmlFor="picture"
-                                        className="flex items-center gap-2 px-3 py-1.5 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md text-xs font-medium cursor-pointer transition-colors"
+                                        className={`flex items-center gap-2 px-3 py-1.5 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md text-xs font-medium cursor-pointer transition-colors ${isUploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
-                                        <UploadCloud className="w-3 h-3" />
-                                        Upload Image
+                                        {isUploadingImage ? (
+                                            <>
+                                                <Loader2 className="w-3 h-3 animate-spin" />
+                                                Uploading...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <UploadCloud className="w-3 h-3" />
+                                                Upload Image
+                                            </>
+                                        )}
                                     </Label>
                                 </div>
                                 <input type="hidden" name="profileImage" value={imagePreview || ''} />
@@ -168,7 +192,7 @@ export function ProfileForm({ user }: { user: UserProfile }) {
                     <CardFooter className="flex justify-between border-t p-6">
                         <Button
                             type="submit"
-                            disabled={isPending || !!previewError}
+                            disabled={isPending || !!previewError || isUploadingImage}
                         >
                             {isPending ? 'Saving...' : 'Save Changes'}
                         </Button>
