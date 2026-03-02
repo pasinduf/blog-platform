@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ReviewQueueClient } from '@/app/reviews/review-queue-client';
+import { ProcessedBlogsClient } from '@/app/reviews/processed-blogs-client';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default async function AdminDashboard() {
     const user = await getSession();
@@ -36,16 +38,29 @@ export default async function AdminDashboard() {
     return (
         <div className="container mx-auto py-8">
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold">Admin Review Queue</h1>
+                <h1 className="text-3xl font-bold">Admin Reviews</h1>
                 <Button variant="secondary" asChild>
                     <Link href="/leaderboard">View Leaderboard</Link>
                 </Button>
             </div>
 
-            <ReviewQueueClient
-                blogs={formattedBlogs}
-                currentUserId={user.id}
-            />
+            <Tabs defaultValue="pending" className="w-full">
+                <TabsList className="mb-6">
+                    <TabsTrigger value="pending">Pending Reviews</TabsTrigger>
+                    <TabsTrigger value="processed">All Reviewed</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="pending" className="mt-0">
+                    <ReviewQueueClient
+                        blogs={formattedBlogs}
+                        currentUserId={user.id}
+                    />
+                </TabsContent>
+
+                <TabsContent value="processed" className="mt-0 pt-4">
+                    <ProcessedBlogsClient currentUserId={user.id} />
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

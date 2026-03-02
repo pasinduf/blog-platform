@@ -207,7 +207,7 @@ export async function requestRevisionAction(blogId: string, commentContent: stri
 
         await prisma.blog.update({
             where: { id: blogId },
-            data: { status: 'DRAFT' }, // Send back to writer
+            data: { status: 'DRAFT', clarityScore: 0, adminAiSummary: '' }
         });
 
         revalidatePath('/reviews');

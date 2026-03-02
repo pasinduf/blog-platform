@@ -230,7 +230,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                 </Button>
                             </div>
 
-                            <div className="relative border-t my-4 py-4">
+                            <div className="relative border-t mt-4 pt-4">
                                 {isPublishing && (
                                     <div className="mb-4 p-4 border border-primary/50 bg-primary/5 rounded-md flex flex-col items-center justify-center gap-2 text-center">
                                         <Spinner className="h-6 w-6 text-primary" />
@@ -242,11 +242,18 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                     className="w-full"
                                     variant="default"
                                     onClick={handlePublish}
-                                    disabled={isPublishing || isOwnPost || blog.status !== 'SUBMITTED'}
+                                    disabled={isPublishing || isOwnPost || blog.status !== 'SUBMITTED' || !aiSummary}
                                 >
                                     {isPublishing ? <Spinner className="mr-2 h-4 w-4" /> : <CheckSquare className="mr-2 h-4 w-4" />}
                                     {isPublishing ? 'Publishing...' : 'Approve & Publish'}
                                 </Button>
+
+                                {!aiSummary && !isOwnPost && blog.status === 'SUBMITTED' && (
+                                    <p className="text-xs text-destructive mt-3 text-center text-balance flex items-center justify-center gap-1">
+                                        <AlertTriangle className="w-3 h-3" />
+                                        AI summary must be generated before publishing.
+                                    </p>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
