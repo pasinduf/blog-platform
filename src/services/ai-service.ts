@@ -91,7 +91,7 @@ export class AIService {
             const settings = await this.getSettingsConfig();
             const ai = this.getAIClient(settings.AI_API_KEY);
             const model = ai.getGenerativeModel({
-                model: "gemini-3-flash-preview",
+                model: "gemini-2.5-flash",
                 generationConfig: {
                     responseMimeType: "application/json",
                     responseSchema: {

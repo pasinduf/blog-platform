@@ -92,7 +92,7 @@ export function ReviewQueueClient({ blogs: initialBlogs, currentUserId }: Review
                                 )}
                                 renderAction={(blog: any) => (
                                     <Button asChild className="w-full" disabled={blog.author?.id === currentUserId}>
-                                        <Link href={`/reviews/${blog.id}`}>
+                                        <Link href={`/reviews/review/${blog.id}`}>
                                             Review Article
                                         </Link>
                                     </Button>

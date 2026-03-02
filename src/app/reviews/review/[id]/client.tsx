@@ -86,7 +86,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                         <ArrowLeft className="h-4 w-4" />
                     </Link>
                 </Button>
-                <h1 className="text-3xl font-bold">Review Draft</h1>
+                <h1 className="text-3xl font-bold">Review Article</h1>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -206,13 +206,13 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                     value={comment}
                                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value)}
                                     className="min-h-[100px]"
-                                    disabled={isOwnPost}
+                                    disabled={isSubmitting || isOwnPost || blog.status !== 'SUBMITTED'}
                                 />
                                 <Button
                                     className="w-full mt-2"
                                     variant="secondary"
                                     onClick={handleAddCommentResubmit}
-                                    disabled={!comment || isSubmitting || isOwnPost}
+                                    disabled={!comment || isSubmitting || isOwnPost || blog.status !== 'SUBMITTED'}
                                 >
                                     {isSubmitting && <Spinner className="mr-2 h-4 w-4" />}
                                     Request Revision
@@ -231,7 +231,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                     className="w-full"
                                     variant="default"
                                     onClick={handlePublish}
-                                    disabled={isPublishing || isOwnPost}
+                                    disabled={isPublishing || isOwnPost || blog.status !== 'SUBMITTED'}
                                 >
                                     {isPublishing ? <Spinner className="mr-2 h-4 w-4" /> : <CheckSquare className="mr-2 h-4 w-4" />}
                                     {isPublishing ? 'Publishing...' : 'Approve & Publish'}
