@@ -9,7 +9,7 @@ export default async function ComposePage() {
     const user = await getSession();
     if (!user) redirect('/login');
     return (
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto py-8 max-w-7xl">
             <div className="mb-6 flex items-center gap-4">
                 <Button variant="ghost" size="icon" asChild>
                     <Link href="/writer">
