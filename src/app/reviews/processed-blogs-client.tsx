@@ -216,9 +216,9 @@ export function ProcessedBlogsClient({ currentUserId }: ProcessedBlogsClientProp
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="relative border rounded-lg overflow-x-auto w-full">
+                <div className="relative border rounded-lg overflow-x-auto w-full min-h-[400px]">
                     {isLoading && (
-                        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex flex-col items-center justify-center z-50 w-full min-h-[300px]">
+                        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex flex-col items-center justify-center z-50 w-full rounded-lg">
                             <Spinner size="lg" />
                         </div>
                     )}

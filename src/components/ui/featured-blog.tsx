@@ -10,7 +10,7 @@ interface FeaturedBlogProps {
   blog: {
     id: string;
     title: string;
-    content: string;
+    content?: string;
     excerpt?: string;
     updatedAt: Date;
     author?: { id?: string; firstName: string; lastName: string };
@@ -23,7 +23,7 @@ interface FeaturedBlogProps {
 
 export default function FeaturedBlog({ blog }: FeaturedBlogProps) {
 
-  const readingTime = calculateReadingTime(blog.content);
+  const readingTime = blog.content ? calculateReadingTime(blog.content) : 0;
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-white rounded-2xl overflow-hidden shadow-xl border border-blue-100">

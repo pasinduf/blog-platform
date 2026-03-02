@@ -79,30 +79,35 @@ export function ReviewQueueClient({ blogs: initialBlogs, currentUserId }: Review
                     </div>
                 )}
 
-                <div className="flex flex-col gap-8">
-                    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                        {blogs.map((blog) => (
-                            <BlogCard
-                                key={blog.id}
-                                blog={blog}
-                                renderContent={(blog: any) => (
-                                    <p className="text-sm text-muted-foreground">
-                                        Needs admin review, AI summary, and potential feedback.
-                                    </p>
-                                )}
-                                renderAction={(blog: any) => (
-                                    <Button asChild className="w-full" disabled={blog.author?.id === currentUserId}>
-                                        <Link href={`/reviews/review/${blog.id}`}>
-                                            Review Article
-                                        </Link>
-                                    </Button>
-                                )}
-                                hideReadingTime={true}
-                            />
-                        ))}
-                    </div>
 
-                    {blogs.length === 0 && (
+
+                <div className="flex flex-col gap-8">
+
+                    {!isLoading && blogs.length > 0 &&
+                        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                            {blogs.map((blog) => (
+                                <BlogCard
+                                    key={blog.id}
+                                    blog={blog}
+                                    renderContent={(blog: any) => (
+                                        <p className="text-sm text-muted-foreground">
+                                            Needs admin review, AI summary, and potential feedback.
+                                        </p>
+                                    )}
+                                    renderAction={(blog: any) => (
+                                        <Button asChild className="w-full" disabled={blog.author?.id === currentUserId}>
+                                            <Link href={`/reviews/review/${blog.id}`}>
+                                                Review Article
+                                            </Link>
+                                        </Button>
+                                    )}
+                                    hideReadingTime={true}
+                                />
+                            ))}
+                        </div>
+                    }
+
+                    {!isLoading && blogs.length === 0 && (
                         <div className="py-12 text-center text-muted-foreground border rounded-lg border-dashed">
                             No articles found matching your criteria.
                         </div>
