@@ -3,7 +3,9 @@ import { ArrowLeft, CalendarDays, Clock, Eye, Share2 } from 'lucide-react';
 import { CommentSection } from '@/components/comment-section';
 import { getSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
-import { notFound } from 'next/navigation';
+import { Card, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { FileQuestion } from 'lucide-react';
 import Image from "next/image";
 import { calculateReadingTime, formatDate } from '@/lib/utils';
 import { BookmarkButton } from '@/components/bookmark-button';
@@ -36,7 +38,28 @@ export default async function ArticlePage({ params }: { params: Promise<{ id: st
     });
 
     if (!blog) {
-        notFound();
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <Card className="max-w-md w-full p-8 text-center shadow-lg border-0 bg-white">
+                    <div className="flex flex-col items-center justify-center space-y-6">
+                        <div className="bg-red-50 p-4 rounded-full">
+                            <FileQuestion className="w-16 h-16 text-red-500" />
+                        </div>
+                        <div>
+                            <CardTitle className="text-2xl font-bold text-gray-900 mb-3">Article Not Found</CardTitle>
+                            <CardDescription className="text-base text-gray-600 leading-relaxed">
+                                We couldn't find the article you're looking for. It may have been removed, or the link might be broken.
+                            </CardDescription>
+                        </div>
+                        <div className="w-full pt-4">
+                            <Button asChild className="w-full py-6 text-base font-medium">
+                                <Link href="/">Return to Homepage</Link>
+                            </Button>
+                        </div>
+                    </div>
+                </Card>
+            </div>
+        );
     }
 
     // Helper to format reactions consistently
