@@ -13,6 +13,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { MoreHorizontal, Link as LinkIcon } from 'lucide-react';
 import { getProcessedBlogs, searchAuthors, updateBlogStatusAction } from '../actions/processed-blogs';
 import { Input } from '@/components/ui/input';
@@ -217,7 +218,7 @@ export function ProcessedBlogsClient({ currentUserId }: ProcessedBlogsClientProp
             <CardContent>
                 <div className="relative border rounded-lg overflow-x-auto w-full">
                     {isLoading && (
-                        <div className="absolute inset-0 bg-background/50 flex flex-col items-center justify-center z-10 w-full min-h-[300px]">
+                        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex flex-col items-center justify-center z-50 w-full min-h-[300px]">
                             <Spinner size="lg" />
                         </div>
                     )}
@@ -307,12 +308,24 @@ export function ProcessedBlogsClient({ currentUserId }: ProcessedBlogsClientProp
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem onClick={() => handleStatusChange(blog.id, 'DRAFT')}>
-                                                            Change to DRAFT
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem onClick={() => handleStatusChange(blog.id, 'SUBMITTED')}>
-                                                            Change to SUBMITTED
-                                                        </DropdownMenuItem>
+                                                        <ConfirmationDialog
+                                                            title="Change Status to Draft"
+                                                            description="Are you sure you want to change this article's status to DRAFT? It will be removed from the published feed."
+                                                            onConfirm={() => handleStatusChange(blog.id, 'DRAFT')}
+                                                        >
+                                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className='cursor-pointer'>
+                                                                Change to DRAFT
+                                                            </DropdownMenuItem>
+                                                        </ConfirmationDialog>
+                                                        <ConfirmationDialog
+                                                            title="Change Status to Submitted"
+                                                            description="Are you sure you want to change this article's status to SUBMITTED? It will go back into the pending review queue."
+                                                            onConfirm={() => handleStatusChange(blog.id, 'SUBMITTED')}
+                                                        >
+                                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className='cursor-pointer'>
+                                                                Change to SUBMITTED
+                                                            </DropdownMenuItem>
+                                                        </ConfirmationDialog>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
                                             ) : (
