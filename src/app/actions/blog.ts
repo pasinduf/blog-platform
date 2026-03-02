@@ -242,8 +242,8 @@ export async function publishBlogAction(blogId: string) {
             },
         });
 
-        revalidatePath('/reviews');
-        revalidatePath('/');
+        // revalidatePath('/reviews');
+        // revalidatePath('/');
         return { success: true };
     } catch (error) {
         console.error('Failed to publish blog:', error);
