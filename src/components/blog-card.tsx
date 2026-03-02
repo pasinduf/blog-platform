@@ -12,7 +12,7 @@ interface BlogCardProps {
     blog: {
         id: string;
         title: string;
-        content: string;
+        content?: string;
         status: string;
         excerpt?: string;
         updatedAt: Date;
@@ -31,7 +31,7 @@ interface BlogCardProps {
 
 export default function BlogCard({ blog, renderAction, renderContent, compact = false, hideAuthor = false, hideReadingTime = false, showStatus = false }: BlogCardProps) {
 
-    const readingTime = calculateReadingTime(blog.content);
+    const readingTime = blog.content ? calculateReadingTime(blog.content) : 0;
 
     if (compact) {
         return (

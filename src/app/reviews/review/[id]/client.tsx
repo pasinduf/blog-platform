@@ -51,6 +51,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
             const result = await requestRevisionAction(blog.id, comment);
             if (result.error) {
                 toast.error(result.error);
+                setIsSubmitting(false);
             } else {
                 toast.success('Comment sent to writer for revision.');
                 router.push('/reviews');
@@ -58,7 +59,6 @@ export function AdminReviewClient({ blog }: { blog: any }) {
         } catch (error) {
             console.error(error);
             toast.error('Failed to request revision.');
-        } finally {
             setIsSubmitting(false);
         }
     };
@@ -69,13 +69,13 @@ export function AdminReviewClient({ blog }: { blog: any }) {
             const result = await publishBlogAction(blog.id);
             if (result.error) {
                 toast.error(result.error);
+                setIsPublishing(false);
             } else {
                 toast.success('Blog Published successfully!');
                 router.push('/reviews');
             }
         } catch (error) {
             toast.error('Failed to publish blog.');
-        } finally {
             setIsPublishing(false);
         }
     };
@@ -181,7 +181,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                     <div>
                                         <span className="font-semibold block text-orange-500">Potential Risks:</span>
                                         <ul className="list-disc pl-5 text-muted-foreground">
-                                            {aiSummary.risks?.map((k: string, i: number) => <li key={i}>{k}</li>)}
+                                            {aiSummary.risks.length > 0 ? aiSummary.risks?.map((k: string, i: number) => <li key={i}>{k}</li>) : 'N/A'}
                                         </ul>
                                     </div>
 

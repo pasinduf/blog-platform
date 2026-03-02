@@ -7,7 +7,7 @@ import BlogCard from './blog-card';
 export interface BaseBlog {
     id: string;
     title: string;
-    content: string;
+    content?: string;
     status: string;
     coverImage?: string | null;
     excerpt?: string;
