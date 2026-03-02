@@ -161,14 +161,18 @@ export async function generateAdminSummaryAction(blogId: string) {
         }
 
         const summary = await AIService.generateAdminSummary(blog.id, blog.title, blog.content);
+        const clarityScore = await AIService.generateClarityScore(blog.id, blog.title, blog.content);
 
         await prisma.blog.update({
             where: { id: blogId },
-            data: { adminAiSummary: summary as any },
+            data: {
+                adminAiSummary: summary as any,
+                clarityScore
+            },
         });
 
         revalidatePath(`/reviews/${blogId}`);
-        return { success: true, summary };
+        return { success: true, summary, clarityScore };
     } catch (error) {
         console.error('Failed to generate summary:', error);
         return { error: 'Failed to generate summary' };
@@ -229,18 +233,15 @@ export async function publishBlogAction(blogId: string) {
             return { error: 'Cannot publish your own post' };
         }
 
-        const clarityScore = await AIService.generateClarityScore(blog.id, blog.title, blog.content);
-
         await prisma.blog.update({
             where: { id: blogId },
             data: {
                 status: 'PUBLISHED',
-                clarityScore
             },
         });
 
         revalidatePath('/reviews');
-        revalidatePath('/'); // Public feed
+        revalidatePath('/');
         return { success: true };
     } catch (error) {
         console.error('Failed to publish blog:', error);

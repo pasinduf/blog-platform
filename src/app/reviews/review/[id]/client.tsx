@@ -19,6 +19,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
     const { user } = useAuth();
     const [isGenerating, setIsGenerating] = useState(false);
     const [aiSummary, setAiSummary] = useState<any>(blog.adminAiSummary || null);
+    const [clarityScore, setClarityScore] = useState<number | null>(blog.clarityScore || null);
     const [comment, setComment] = useState('');
     const [isPublishing, setIsPublishing] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,6 +34,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                 toast.error(result.error);
             } else if (result.success && result.summary) {
                 setAiSummary(result.summary);
+                setClarityScore(result.clarityScore || null);
                 toast.success('AI summary generated successfully.');
             }
         } catch (error) {
@@ -149,6 +151,15 @@ export function AdminReviewClient({ blog }: { blog: any }) {
 
                             {!isGenerating && aiSummary && (
                                 <div className="space-y-4 text-sm">
+                                    <div className="flex justify-between items-center bg-muted/50 p-4 rounded-lg border">
+                                        <div className="flex flex-col">
+                                            <span className="font-semibold text-lg">AI Clarity Score</span>
+                                            <span className="text-muted-foreground text-xs">Evaluated readability and structure</span>
+                                        </div>
+                                        <div className="text-2xl font-bold text-primary">
+                                            {clarityScore !== null ? `${clarityScore}/100` : 'N/A'}
+                                        </div>
+                                    </div>
                                     <div><span className="font-semibold block">Summary:</span> {aiSummary.summary}</div>
                                     <div>
                                         <span className="font-semibold block">Key Points:</span>
@@ -223,7 +234,7 @@ export function AdminReviewClient({ blog }: { blog: any }) {
                                 {isPublishing && (
                                     <div className="mb-4 p-4 border border-primary/50 bg-primary/5 rounded-md flex flex-col items-center justify-center gap-2 text-center">
                                         <Spinner className="h-6 w-6 text-primary" />
-                                        <p className="text-sm font-medium text-primary">Publishing & Generating AI Clarity Score...</p>
+                                        <p className="text-sm font-medium text-primary">Publishing...</p>
                                         <p className="text-xs text-muted-foreground">This may take a few moments.</p>
                                     </div>
                                 )}
