@@ -27,7 +27,7 @@ export default async function AdminSettingsPage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
             <h1 className="text-3xl font-bold mb-8 tracking-tight">System Settings</h1>
             <SettingsClient settings={result.settings || []} />
         </div>

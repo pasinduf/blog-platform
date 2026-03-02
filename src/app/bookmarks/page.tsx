@@ -13,7 +13,7 @@ export default async function BookmarksPage() {
     const initialData = await getBookmarksAction();
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="container mx-auto px-4 py-8 max-w-5xl">
             <div className="mb-12 bg-white rounded-2xl shadow-lg px-6 py-4">
                 <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
                     <div>

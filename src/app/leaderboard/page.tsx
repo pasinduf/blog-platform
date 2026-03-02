@@ -52,8 +52,9 @@ export default async function LeaderboardPage() {
         .slice(0, 10); // Keep top 10
 
     return (
-        <div className="container mx-auto py-8">
-            <div className="mb-8 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
+
+            <div className="mb-6 flex items-center gap-4">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" asChild>
                         <Link href="/reviews">

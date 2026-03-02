@@ -36,7 +36,7 @@ export default async function AdminDashboard() {
     }));
 
     return (
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto px-4 py-8 max-w-7xl">
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">Admin Reviews</h1>
                 <Button variant="secondary" asChild>
@@ -57,7 +57,7 @@ export default async function AdminDashboard() {
                     />
                 </TabsContent>
 
-                <TabsContent value="processed" className="mt-0 pt-4">
+                <TabsContent value="processed" className="mt-0">
                     <ProcessedBlogsClient currentUserId={user.id} />
                 </TabsContent>
             </Tabs>
