@@ -3,6 +3,7 @@ import { Resend } from 'resend';
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
 const siteUrl = process.env.PUBLIC_SITE_URL;
+const fromEmail = process.env.FROM_EMAIL || '';
 
 export async function sendWelcomeEmail(to: string, name: string) {
     if (!resend) {
@@ -12,10 +13,10 @@ export async function sendWelcomeEmail(to: string, name: string) {
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'onboarding@resend.dev',
-            to,
-            subject: 'Welcome to the BlogHub!',
-            html: `
+          from: fromEmail,
+          to,
+          subject: "Welcome to the BlogHub!",
+          html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
                     <h2 style="color: #111;">Welcome, ${name}!</h2>
                     <p>Your account on the Blog Platform has been <strong>approved</strong> by an administrator.</p>
@@ -57,10 +58,10 @@ export async function sendPasswordResetEmail(email: string, token: string) {
         const resetLink = `${siteUrl}/reset-password?token=${token}`;
 
         const { data, error } = await resend.emails.send({
-            from: 'onboarding@resend.dev',
-            to: [email],
-            subject: 'Reset your password for BlogHub',
-            html: `
+          from: fromEmail,
+          to: [email],
+          subject: "Reset your password for BlogHub",
+          html: `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
                     <h2 style="color: #111;">Password Reset Request</h2>
                     <p>You requested a password reset for your account. Click the button below to choose a new password:</p>
