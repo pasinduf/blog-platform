@@ -189,7 +189,7 @@ export function ProfileForm({ user }: { user: UserProfile }) {
                         </div>
 
                     </CardContent>
-                    <CardFooter className="flex justify-between border-t p-6">
+                    <CardFooter className="flex justify-end border-t px-6 py-2 mt-4">
                         <Button
                             type="submit"
                             disabled={isPending || !!previewError || isUploadingImage}

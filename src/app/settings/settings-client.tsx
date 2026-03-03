@@ -140,7 +140,7 @@ export function SettingsClient({ settings }: { settings: SettingItem[] }) {
                             </div>
 
                         </CardContent>
-                        <CardFooter className="flex justify-end border-t px-6 py-2 bg-muted/10">
+                        <CardFooter className="flex justify-end border-t px-6 py-2 mt-4 bg-muted/10">
                             <Button
                                 type="submit"
                                 disabled={isPending || localContent.trim() === '' || localContent === selectedSetting.value}
